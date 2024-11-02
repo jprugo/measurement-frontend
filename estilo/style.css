@@ -1,0 +1,167 @@
+@font-face {
+font-family: Amelia-Basic-Light;
+src: url("../Fonts/Amelia-Basic-Light.otf");
+}
+
+@font-face {
+font-family: Amelia-Basic-Bold;
+src: url("../Fonts/Amelia-Basic-Bold.otf");
+}
+
+@font-face {
+font-family: Nunito-Black;
+src: url("../Fonts/Nunito-Black.ttf");
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  font: 1.2rem sans-serif;
+  background-color: #fff;
+  font-family: Roboto, Amelia-Basic-Light, Nunito-Black, Verdana;
+}
+.bg {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  background: #000000;
+  /*background: -webkit-linear-gradient(left top, #F9B63C 50%, #222EBB 50%);
+    background: linear-gradient(155deg, #F9B63C 60%, #222EBB 40%);*/
+}
+
+.textred {
+  font-size: 0.5rem;
+  color: #f00;
+}
+.strong {
+  font-weight: bold;
+}
+.flotante{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:500px;
+  /*indicamos que el margen izquierdo, es la mitad de la anchura*/
+  margin-left:-250px;
+  height:80px;
+  /*indicamos que el margen superior, es la mitad de la altura*/
+  margin-top:-40px;
+}
+.sombra{
+  box-shadow: 8px 5px 40px #638498;
+  -moz-box-shadow: -8px -5px 40px #638498, 8px  5px 40px #638498;
+  -webkit-box-shadow: -8px -5px 40px #638498, 8px  5px 40px #638498;
+  
+  -moz-border-radius-topleft: 15px;
+  -moz-border-radius-topright: 15px;
+  -moz-border-radius-bottomleft: 15px;
+  -moz-border-radius-bottomright: 15px;
+  -webkit-border-top-left-radius: 15px;
+  -webkit-border-top-right-radius: 15px;
+  -webkit-border-bottom-left-radius: 15px;
+  -webkit-border-bottom-right-radius: 15px;
+}
+.btn-modal {
+  color: #fff;
+  background-color: #ee1d23;
+  border-color: #ee1d23;
+}
+
+.btn-modal:hover {
+  color: #fff;
+  background-color: #393939;
+  border-color: #393939;
+}
+.barra{
+  position: absolute;
+  width: 100%;
+  height: 100px;
+  top: 100dp;
+}
+.logo{
+  position: relative;
+  width: auto;
+  height: auto;
+  left: : 100px;
+  background: url(../imagenes/ccb_logo.png) no-repeat;
+  border: 1px solid #f00;
+}
+.imgCar{
+  position:absolute;
+  width:55%;
+  height:40%;
+  border-right:5%;
+  bottom:6%;
+  right:5%;
+  /*background: url(../images/car3.png) no-repeat;*/
+  background-size: 25px 50px;
+  background-size: 100% 100%;
+}
+.logos{
+  position:absolute;
+  display: flex;
+  flex-direction: row;
+  width: 30%;
+  height: auto;
+  left: 50%;
+  top:15%;
+  margin-left:-15%;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  z-index:999;
+}
+.box {
+  position:absolute;
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  height: auto;
+  left: 50%;
+  top: 45%;
+  margin-left:-20%;
+  text-align: center;
+}
+.consulta{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.boton{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  text-align:center;
+  height: auto;
+}
+label {
+    display: block;
+    font: 1rem 'Fira Sans', sans-serif;
+	font-weight: 500;
+}
+
+input,
+label {
+    margin: .4rem 0;
+}
+
+.btn-borde {
+  padding: .375rem .75rem;
+  border: 1px solid #007bff;
+  border-radius: .25rem;
+  color: #007bff;
+  background-color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  z-index:999;
+}
+
+.btn-borde:hover, .btn-borde:active, .btn-borde:focus {
+  color: #fff;
+  background-color: #007bff;
+  cursor: pointer;
+  
+}

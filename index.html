@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Measurement Tool</title>
+    <link rel="stylesheet" href="estilo/bootstrap.css">
+    <link rel="stylesheet" href="font/roboto.css">
+    <link rel="stylesheet" href="font/bootstrap-icons.min.css">
+    <!-- Scripts -->
+    <script src="js/jquery/jquery.min.js"></script>
+    <script src="js/bootstrap/bootstrap.bundle.js"></script>
+    <script src="js/swiper.min.js"></script> <!-- Swiper for image and text sliders -->
+    <script src="js/jquery/jquery.magnific-popup.js"></script> <!-- Magnific Popup for lightboxes -->
+    <script src="js/jquery/jquery.easing.min.js"></script> <!-- jQuery Easing for smooth scrolling between anchors -->
+    <script src="js/jquery/jquery.canvasjs.min.js"></script>
+    <script src="js/validator.min.js"></script> <!-- Validator.js - Bootstrap plugin that validates forms -->
+    <script src="js/gigascript.js"></script>
+</head>
+
+<body class="container-fluid" style="padding: 0;">
+    <nav class="navbar navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="img/logo.png" alt="" width="30" height="30" class="d-inline-block align-text-center">
+                TERO Solutions
+            </a>
+        </div>
+    </nav>
+
+    <!-- Barra de menu -->
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark" id="menuPrincipal">
+                <div
+                    class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white-50 min-vh-100">
+                    <a class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white-50 text-decoration-none"
+                        style="margin-top: 70px;">
+                        <span class="fs-5 d-none d-sm-inline">Menu</span>
+                    </a>
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start"
+                        id="menu">
+                        <li>
+                            <!-- LISTA CON MEDICIONES DISPONIBLES -->
+                            <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                                <i class="fs-4 bi-speedometer2"></i><span class="d-none d-sm-inline"> <span
+                                        class="ms-1 d-none d-sm-inline">Mediciones</span></span>
+                            </a>
+                            <ul class="collapse show nav flex-column ms-1" id="submenu1" data-bs-parent="#menu"></ul>
+
+                            <!-- LISTA DE CONFIGURACION -->
+                            <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                                <i class="fs-4 bi-speedometer2"></i><span class="d-none d-sm-inline"> <span
+                                        class="ms-1 d-none d-sm-inline">Configuraciones</span></span>
+                            </a>
+                            <ul class="collapse show nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
+                                <li class="w-100">
+                                    <button class="nav-link px-0 align-middle" id="configuracion"
+                                        onclick="manejarClicMenu('configuracion.html', '#contenido')">
+                                        <i class="fs-4 bi-palette"></i>
+                                        <span class="ms-1 d-none d-sm-inline">Configuraci&oacute;n</span>
+                                    </button>
+                                </li>
+                                <li class="w-100">
+                                    <button class="nav-link px-0 align-middle" id="configuracionalarmas"
+                                        onclick="manejarClicMenu('configuracionalarmas.html', '#contenido')">
+                                        <i class="fs-4 bi-palette"></i>
+                                        <span class="ms-1 d-none d-sm-inline">Configuraci&oacute;n alarmas</span>
+                                    </button>
+                                </li>
+                                <li class="w-100">
+                                    <button class="nav-link px-0 align-middle" id="definicionpasos"
+                                        onclick="manejarClicMenu('definicionpasos.html', '#contenido')">
+                                        <i class="fs-4 bi-stopwatch"></i>
+                                        <span class="ms-1 d-none d-sm-inline">Definici&oacute;n de pasos</span>
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <!-- ALARMAS -->
+                        <li class="w-100">
+                            <button class="nav-link px-0 align-middle" id="alarmas"
+                                onclick="manejarClicMenu('alarmas.html', '#contenido')">
+                                <i class="fs-4 bi-bell"></i>
+                                <span class="ms-1 d-none d-sm-inline">Alarmas</span>
+                            </button>
+                        </li>
+
+                        </li>
+
+
+
+                    </ul>
+                </div>
+            </div>
+            <div class="col py-3 bg-light mt-5" id="contenido"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        function manejarClicMenu(url, id) {
+            //return function () {
+                cargarContenido(url, id);
+            //};
+        }
+
+        $(document).ready(function () {
+            $.ajax({
+                url: "http://localhost:8000/option",
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    let result = data.result;
+                    let content = '';
+                    let index = 0;
+                    result.forEach(element => {
+                        index++;
+                        //content += "<li class= \"w-100\"> <button class=\"nav-link px-0 bi-${index}-square-fill\" id=\"medicion${element.title}\" onclick=\"manejarClicMenu('${element.resource_path}', '#contenido')\"> <span class=\"d-none d-sm-inline\"> Medici&oacute;n ${element.title}</span></button></li>";
+                        content += "<li class= \"w-100\"> <button class=\"nav-link px-0 bi-${index}-square-fill\" id=medicion" + element.title + " onclick=\"manejarClicMenu('" + element.resource_path + "', '#contenido')\"> <span class=\"d-none d-sm-inline\"> Medici&oacute;n " + element.title + "</span></button></li>";
+                    });
+
+                    document.getElementById('submenu1').innerHTML = content;
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al recuperar los datos del backend:", error);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

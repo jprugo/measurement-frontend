@@ -1,0 +1,66 @@
+<html lang="es">
+
+<body>
+    <div class="container-fluid">
+        <div class="row mb-1 text-muted pt-4">
+            <h2>Alarmas</h2>
+        </div>
+        <div class="row" style="height: 90%;">
+            <div class="col-lg-8 col-md-8 col-sm-12 offset-lg-2 offset-md-1">
+                <div class="row pb-2">
+                    <div class="col-12">
+                        <div class="card border-light pt-3 ps-3 pe-3" style="border-radius: 15px; height:auto">
+                            <div class="card-body">
+                                <div id="tabla" style="height: 90%; max-height: 90%; overflow:auto;">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Sensor</th>
+                                                <th scope="col">Alarma</th>
+                                                <th scope="col">Valor</th>
+                                                <th scope="col">Fecha</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tabla-body">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+
+        $(document).ready(function () {
+            $.ajax({
+                url: "http://localhost:8000/alarm",
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    $("#tabla-body").empty();
+                    $.each(data, function (index, item) {
+                        $("#tabla-body").append(`
+                        <tr>
+                            <td>${item.measure_type}</td>
+                            <td>${item.alarm_type}</td>
+                            <td>${item.measure_value}</td>
+                            <td>${item.created_at}</td>
+                        </tr>
+                        `);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al recuperar los datos del backend:", error);
+                }
+            });
+        });
+
+    </script>
+</body>
+
+</html>

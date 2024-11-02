@@ -1,0 +1,11 @@
+{
+	"Aislamiento": 1256,
+	"Resistencia": [4.5, 4.3,4.8],
+	"Presion C": 20,
+	"Presion D":14,
+	"Temp C": 112,
+	"Temp Motor": 145,
+	"Vibracion X": 0.035,
+	"Vibracion Z": 0.002,
+	"Deteccion V": "false"
+}

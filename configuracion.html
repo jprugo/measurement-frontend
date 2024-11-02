@@ -1,0 +1,236 @@
+<html>
+
+<body>
+    <div class="container-fluid">
+        <div class="row mb-1 text-muted pt-4">
+            <h2>Configuraci&oacute;n</h2>
+        </div>
+        <div class="row mb-3 text-secondary">
+            <h5>Orquestador</h5>
+        </div>
+        <div class="row">
+            <div class="col-lg-10 col-md-10 col-sm-12 offset-lg-1 offset-md-1">
+                <div class="row pb-2">
+                    <div class="col-12">
+                        <div class="card border-light" style="border-radius: 15px;">
+                            <div class="card-body ps-5" id="list-config">
+
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="openConfiguracionModal()">Crear configuración</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="configuracionModal" tabindex="-1" aria-labelledby="configuracionModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="configuracionModalLabel">Crear Configuración de Alarma</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modal-body-content">
+                    <!-- Contenido dinámico se inyectará aquí -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarConfiguracion()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        $(document).ready(function () {
+            makeRequest();
+        });
+
+        function makeRequest() {
+            $.ajax({
+                url: "http://localhost:8000/configuration",
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    console.log(data.result);
+                    items = data.result;
+                    putItemsList(items);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al recuperar los datos del backend:", error);
+                }
+            });
+        }
+
+        function putItemsList(items) {
+            content = ``;
+            items.forEach(item => {
+                console.log(item);
+                console.log(item.id);
+                content += `
+                <div class="row mb-3 text-secondary">
+                    <div class="col-sm-3">
+                        <label for="${item.name}Input" class="col-sm-3 col-form-label">${item.name}</label>
+                        <input type="text" class="form-control" id="${item.name}Input" placeholder="" value="${item.value}">
+                    </div>
+                </div>
+
+                <!-- BOTONERA -->
+                <div class="row pb-2">
+                        <div class="col-sm-6 offset-sm-3">
+                            <div class="d-flex justify-content-between">
+                                <button class="btn btn-primary flex-fill me-2" onclick="actualizarConfiguracion(${item.id}, '${item.name}')">Guardar</button>
+                                <button class="btn btn-danger flex-fill" onclick="eliminarConfiguracion(${item.id}, '${item.name}')">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                <hr>
+                `
+            });
+
+            document.getElementById('list-config').innerHTML = content;
+        }
+
+        function actualizarConfiguracion(id, name) {
+            const value = document.getElementById(`${name}Input`).value;
+
+            const params = new URLSearchParams({
+                id: id,
+                value: value
+            });
+
+            fetch(`http://localhost:8000/configuration?${params}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud: ' + response.statusText);
+                    }
+                })
+                .then(data => {
+                    alert("Elemento de configuración actualizado.");
+                })
+                .catch(error => {
+                    console.error("Error al recuperar los datos del backend:", error);
+                });
+        }
+
+
+        function openConfiguracionModal() {
+            const content = `
+                <div class="row mb-3 text-secondary">
+                    <label class="col-sm-3 col-form-label">Nombre</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="name" name="name" value="NAME">
+                    </div>
+                </div>
+                <div class="row mb-3 text-secondary">
+                    <label class="col-sm-3 col-form-label">Valor</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="value" name="value" value="VALUE">
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-body-content').innerHTML = content;
+
+            const myModal = new bootstrap.Modal(document.getElementById('configuracionModal'));
+            myModal.show();
+        }
+
+        function guardarConfiguracion() {
+            const name = document.getElementById('name').value;
+            const value = document.getElementById('value').value;
+
+            const params = new URLSearchParams({
+                name: name,
+                value: value,
+                treatment_as: 'STRING'
+            });
+
+            fetch(`http://localhost:8000/configuration?${params}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud: ' + response.statusText);
+                    }
+                })
+                .then(data => {
+                    alert("Configuración de alarma creada.");
+                    makeRequest(); // Refresca la lista
+                    const myModal = bootstrap.Modal.getInstance(document.getElementById('configuracionModal'));
+                    myModal.hide(); // Cierra el modal
+                })
+                .catch(error => {
+                    console.error("Error al recuperar los datos del backend:", error);
+                }
+                )
+        }
+
+        function eliminarConfiguracion(id, name) {
+            const value = document.getElementById(`${name}Input`).value;
+
+            const params = new URLSearchParams({
+                id: id,
+                value: value
+            });
+
+            fetch(`http://localhost:8000/configuration?${params}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud: ' + response.statusText);
+                    }
+                })
+                .then(data => {
+                    alert("Elemento de configuración eliminado.");
+                })
+                .catch(error => {
+                    console.error("Error al recuperar los datos del backend:", error);
+                });
+        }
+
+        function crearConfiguracion() {
+            const params = new URLSearchParams({
+                name: 'dummy',
+                value: 'dummyValue',
+                treatment_as: 'STRING'
+            });
+
+            fetch(`http://localhost:8000/configuration?${params}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud: ' + response.statusText);
+                    }
+                })
+                .then(data => {
+                    alert("Elemento de configuración creado.");
+                })
+                .catch(error => {
+                    console.error("Error al recuperar los datos del backend:", error);
+                });
+        }
+
+    </script>
+</body>
+
+</html>
