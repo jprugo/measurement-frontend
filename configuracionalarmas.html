@@ -19,16 +19,16 @@
             <h5>Alarmas</h5>
         </div>
         <div class="row">
-            <div class="col-lg-10 col-md-10 col-sm-12 offset-lg-1 offset-md-1">
+            <div class="col-lg-12 col-md-12 col-sm-12">
                 <div class="row pb-2">
                     <div class="col-12">
                         <div class="card border-light" style="border-radius: 15px;">
-                            <div class="card-body ps-5" id="alarmconfig-list">
+                            <div class="card-body m-3" id="alarmconfig-list">
                                 <!-- Contenido dinámico aquí -->
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary" onclick="openConfiguracionModal()">Crear configuración alarma</button>
+                    <button type="button" class="btn btn-primary mt-2" onclick="openConfiguracionModal()">Crear configuración alarma</button>
                 </div>
             </div>
         </div>
@@ -36,13 +36,13 @@
 
     <!-- Modal -->
     <div class="modal fade" id="configuracionModal" tabindex="-1" aria-labelledby="configuracionModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="configuracionModalLabel">Crear Configuración de Alarma</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="modal-body-content">
+                <div class="modal-body m-2" id="modal-body-content">
                     <!-- Contenido dinámico se inyectará aquí -->
                 </div>
                 <div class="modal-footer">
@@ -81,8 +81,8 @@
 
                     <!-- Visualizador -->
                     <div class="row mb-3 text-secondary">
-                        <div class="col-sm-3">
-                            <label class="form-label" for="${item.id}measure_type">Medida</label>
+                        <div class="col-sm-5 pb-2">
+                            <label class="form-label" for="${item.id}measure_type">Medidas</label>
                             <select class="form-select" id="${item.id}measure_type" name="${item.id}measure_type">
                                 <option value="ISOLATION" ${item.measure_type === 'ISOLATION' ? 'selected' : ''}>AISLAMIENTO</option>
                                 <option value="RESISTANCE" ${item.measure_type === 'RESISTANCE' ? 'selected' : ''}>RESISTENCIA</option>
@@ -93,12 +93,12 @@
                         </div>
 
                         <div class="col-sm-3">
-                            <label class="col-sm-3 col-form-label" for="${item.id}config_value">Valor</label>
+                            <label class="form-label" for="${item.id}config_value">Valor <span class="small">(Unidad)</span></label>
                             <input type="number" class="form-control" name="${item.id}config_value" id="${item.id}config_value" value="${item.config_value}">
                         </div>
 
-                        <div class="col-sm-3">
-                            <label class="col-sm-3 col-form-label" for="${item.id}alarm_type">Alarma</label>
+                        <div class="col-sm-4 pb-2">
+                            <label class="form-label" for="${item.id}alarm_type">Alarma</label>
                             <select class="form-select" name="${item.id}alarm_type" id="${item.id}alarm_type">
                                     <option value="DESVEST" ${item.alarm_type === 'DESVEST' ? 'selected' : ''}>DESVEST</option>
                                     <option value="LOWER_THAN" ${item.alarm_type === 'LOWER_THAN' ? 'selected' : ''}>MENOR QUE</option>
@@ -106,18 +106,25 @@
                             </select>
                         </div>
 
-                        <div class="col-sm-3">
-                            <label class="col-sm-3 col-form-label" for="${item.id}sound_path">Sonido</label>
+                        <div class="col-sm-5">
+                            <label class="form-label" for="${item.id}sound_path">Sonido</label>
                             <input type="text" class="form-control" name="${item.id}sound_path" id="${item.id}sound_path" value="${item.sound_path}">
+                        </div>
+
+                        <div class="col-sm-3 pb-2">
+                            <label class="form-label" for="${item.id}active_ind">Habilitada</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="${item.id}active_ind" checked>
+                            </div>
                         </div>
                     </div>
                     
                     <!-- BOTONERA -->
                     <div class="row pb-2">
-                        <div class="col-sm-6 offset-sm-3">
+                        <div class="col-sm-12">
                             <div class="d-flex justify-content-between">
-                                <button class="btn btn-primary flex-fill me-2" onclick="actualizarConfiguracionAlarmas(${item.id})">Guardar</button>
-                                <button class="btn btn-danger flex-fill" onclick="eliminarConfiguracionAlarmas(${item.id})">Eliminar</button>
+                                <button class="btn btn-primary flex-fill me-2 bi bi-save2-fill" onclick="actualizarConfiguracionAlarmas(${item.id})"></button>
+                                <button class="btn btn-danger flex-fill bi bi-trash2-fill" onclick="eliminarConfiguracionAlarmas(${item.id})"></button>
                             </div>
                         </div>
                     </div>
@@ -192,8 +199,8 @@
         function openConfiguracionModal() {
             const content = `
                 <div class="row mb-3 text-secondary">
-                    <div class="col-sm-3">
-                        <label class="col-sm-3 col-form-label">Medida</label>
+                    <div class="col-sm-5 offset-sm-1">
+                        <label class="form-label">Medida</label>
                         <select class="form-select" id="newMeasureType" name="newMeasureType">
                             <option value="ISOLATION">AISLAMIENTO</option>
                             <option value="RESISTANCE">RESISTENCIA</option>
@@ -202,32 +209,29 @@
                             <option value="VIBRATION">VIBRACIÓN</option>
                         </select>
                     </div>
-                </div>
 
-                <div class="row mb-3 text-secondary">
-                    <div class="col-sm-3">
-                        <label class="col-sm-3 col-form-label">Valor</label>
+                    <div class="col-sm-5">
+                        <label class="form-label">Valor <span class="small">(Unidad)</span></label>
                         <input type="number" class="form-control" id="newConfigValue" name="newConfigValue" value="22">
                     </div>
                 </div>
 
                 <div class="row mb-3 text-secondary">
-                    <div class="col-sm-3">
-                        <label class="col-sm-3 col-form-label">Alarma</label>
+                    <div class="col-sm-5 offset-sm-1">
+                        <label class="form-label">Alarma</label>
                         <select class="form-select" id="newAlarmType" name="newAlarmType">
                             <option value="DESVEST">DESVEST</option>
                             <option value="LOWER_THAN">MENOR QUE</option>
                             <option value="GREATER_THAN">MAYOR QUE</option>
                         </select>
                     </div>
-                </div>
 
-                <div class="row mb-3 text-secondary">
-                    <div class="col-sm-3">
-                        <label class="col-sm-3 col-form-label">Sonido</label>
+                    <div class="col-sm-5">
+                        <label class="form-label">Sonido</label>
                         <input type="text" class="form-control" id="newSoundPath" name="newSoundPath" value="dummy_path">
                     </div>
                 </div>
+
             `;
             document.getElementById('modal-body-content').innerHTML = content;
 
