@@ -13,27 +13,26 @@
                 <div class="row pb-2">
                     <div class="col-12">
                         <div class="card border-light" style="border-radius: 15px;">
-                            <div class="card-body ps-5" id="list-config">
+                            <div class="card-body m-3" id="list-config">
 
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary" onclick="openConfiguracionModal()">Crear configuración</button>
+                    <button type="button" class="btn btn-primary mt-2" onclick="openConfiguracionModal()">Crear configuración</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="configuracionModal" tabindex="-1" aria-labelledby="configuracionModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+    <div class="modal fade" id="configuracionModal" tabindex="-1" aria-labelledby="configuracionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="configuracionModalLabel">Crear Configuración de Alarma</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="modal-body-content">
+                <div class="modal-body m-2" id="modal-body-content">
                     <!-- Contenido dinámico se inyectará aquí -->
                 </div>
                 <div class="modal-footer">
@@ -72,14 +71,24 @@
                 console.log(item);
                 console.log(item.id);
                 content += `
-                <div class="row mb-3 text-secondary">
-                    <div class="col-sm-3">
-                        <label for="${item.name}Input" class="col-sm-3 col-form-label">${item.name}</label>
+                <div class="row mb-2 text-secondary">
+                    <div class="col-sm-4 mb-3">
+                        <label for="${item.name}Input" class="form-label">${item.name}</label>
+                    </div>
+                    <div class="col-sm-5 mb-3">
                         <input type="text" class="form-control" id="${item.name}Input" placeholder="" value="${item.value}">
                     </div>
+                    <!-- BOTONERA -->
+                    <div class="col-sm-3 text-center pb-2">
+                        <div class="d-flex justify-content-start">
+                            <button class="btn btn-primary flex-fill me-2 bi bi-save2-fill" onclick="actualizarConfiguracion(${item.id}, '${item.name}')"></button>
+                            <button class="btn btn-danger flex-fill bi bi-trash2-fill" onclick="eliminarConfiguracion(${item.id}, '${item.name}')"></button>
+                        </div>
+                    </div>
+                    <hr>
                 </div>
 
-                <!-- BOTONERA -->
+                <!--
                 <div class="row pb-2">
                         <div class="col-sm-6 offset-sm-3">
                             <div class="d-flex justify-content-between">
@@ -88,7 +97,8 @@
                             </div>
                         </div>
                     </div>
-                <hr>
+                -->
+                
                 `
             });
 
@@ -127,13 +137,13 @@
             const content = `
                 <div class="row mb-3 text-secondary">
                     <label class="col-sm-3 col-form-label">Nombre</label>
-                    <div class="col-sm-3">
+                    <div class="col-sm-5">
                         <input type="text" class="form-control" id="name" name="name" value="NAME">
                     </div>
                 </div>
                 <div class="row mb-3 text-secondary">
                     <label class="col-sm-3 col-form-label">Valor</label>
-                    <div class="col-sm-3">
+                    <div class="col-sm-5">
                         <input type="text" class="form-control" id="value" name="value" value="VALUE">
                     </div>
                 </div>

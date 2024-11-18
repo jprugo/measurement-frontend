@@ -51,7 +51,7 @@
 
                             <!-- LISTA DE CONFIGURACION -->
                             <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                <i class="fs-4 bi-speedometer2"></i><span class="d-none d-sm-inline"> <span
+                                <i class="fs-4 bi bi-gear"></i><span class="d-none d-sm-inline"> <span
                                         class="ms-1 d-none d-sm-inline">Configuraciones</span></span>
                             </a>
                             <ul class="collapse show nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
@@ -59,14 +59,14 @@
                                     <button class="nav-link px-0 align-middle" id="configuracion"
                                         onclick="manejarClicMenu('configuracion.html', '#contenido')">
                                         <i class="fs-4 bi-palette"></i>
-                                        <span class="ms-1 d-none d-sm-inline">Configuraci&oacute;n</span>
+                                        <span class="ms-1 d-none d-sm-inline">Propiedades</span>
                                     </button>
                                 </li>
                                 <li class="w-100">
                                     <button class="nav-link px-0 align-middle" id="configuracionalarmas"
                                         onclick="manejarClicMenu('configuracionalarmas.html', '#contenido')">
                                         <i class="fs-4 bi-palette"></i>
-                                        <span class="ms-1 d-none d-sm-inline">Configuraci&oacute;n alarmas</span>
+                                        <span class="ms-1 d-none d-sm-inline">Alarmas</span>
                                     </button>
                                 </li>
                                 <li class="w-100">
@@ -118,7 +118,7 @@
                     result.forEach(element => {
                         index++;
                         //content += "<li class= \"w-100\"> <button class=\"nav-link px-0 bi-${index}-square-fill\" id=\"medicion${element.title}\" onclick=\"manejarClicMenu('${element.resource_path}', '#contenido')\"> <span class=\"d-none d-sm-inline\"> Medici&oacute;n ${element.title}</span></button></li>";
-                        content += "<li class= \"w-100\"> <button class=\"nav-link px-0 bi-${index}-square-fill\" id=medicion" + element.title + " onclick=\"manejarClicMenu('" + element.resource_path + "', '#contenido')\"> <span class=\"d-none d-sm-inline\"> Medici&oacute;n " + element.title + "</span></button></li>";
+                        content += "<li class= \"w-100\"> <button class=\"nav-link px-0 bi-${index}-square-fill\" id=medicion" + element.title + " onclick=\"manejarClicMenu('" + element.resource_path + "', '#contenido')\"><i class=\"fs-4 bi bi-" + index + "-circle\"></i> <span class=\"d-none d-sm-inline\"> " + element.title + "</span></button></li>";
                     });
 
                     document.getElementById('submenu1').innerHTML = content;
