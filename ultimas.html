@@ -15,8 +15,8 @@
                                     <table class="table">
                                         <thead>
                                             <tr>
+                                                <th scope="col">Medida</th>
                                                 <th scope="col">Sensor</th>
-                                                <th scope="col">Alarma</th>
                                                 <th scope="col">Valor</th>
                                                 <th scope="col">Fecha</th>
                                             </tr>
@@ -38,7 +38,7 @@
 
         $(document).ready(function () {
             $.ajax({
-                url: "http://localhost:8000/alarm",
+                url: "http://localhost:8000/measurement/last",
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
@@ -48,8 +48,8 @@
                         $("#tabla-body").append(`
                         <tr>
                             <td>${item.measure_type}</td>
-                            <td>${item.alarm_type}</td>
-                            <td>${item.measure_value}</td>
+                            <td>${item.detail}</td>
+                            <td>${item.value}</td>
                             <td>${item.created_at}</td>
                         </tr>
                         `);

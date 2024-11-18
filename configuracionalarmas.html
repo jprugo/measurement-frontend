@@ -112,9 +112,9 @@
                         </div>
 
                         <div class="col-sm-3 pb-2">
-                            <label class="form-label" for="${item.id}active_ind">Habilitada</label>
+                            <label class="form-label" for="${item.id}active">Habilitada</label>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="${item.id}active_ind" checked>
+                                <input class="form-check-input" type="checkbox" role="switch" id="${item.id}enabled" ${item.enabled === true ? 'checked' : ''}>
                             </div>
                         </div>
                     </div>
@@ -140,13 +140,15 @@
             const configValue = document.getElementById(`${id}config_value`).value;
             const alarmType = document.getElementById(`${id}alarm_type`).value;
             const soundPath = document.getElementById(`${id}sound_path`).value;
+            const enabled = document.getElementById(`${id}enabled`).checked;
 
             const params = new URLSearchParams({
                 id: id,
                 measure_type: measureType,
                 new_value: configValue,
                 new_alarm_type: alarmType,
-                new_sound_path: soundPath
+                new_sound_path: soundPath,
+                enabled: enabled
             });
 
             fetch(`http://localhost:8000/alarmDefinition?${params}`, {
@@ -212,7 +214,7 @@
 
                     <div class="col-sm-5">
                         <label class="form-label">Valor <span class="small">(Unidad)</span></label>
-                        <input type="number" class="form-control" id="newConfigValue" name="newConfigValue" value="22">
+                        <input type="number" class="form-control" id="newConfigValue" name="newConfigValue">
                     </div>
                 </div>
 
@@ -228,7 +230,7 @@
 
                     <div class="col-sm-5">
                         <label class="form-label">Sonido</label>
-                        <input type="text" class="form-control" id="newSoundPath" name="newSoundPath" value="dummy_path">
+                        <input type="text" class="form-control" id="newSoundPath" name="newSoundPath" value="">
                     </div>
                 </div>
 
@@ -249,7 +251,8 @@
                 measure_type: measureType,
                 value: configValue,
                 alarm_type: alarmType,
-                sound_path: soundPath
+                sound_path: soundPath,
+                enabled: true
             });
 
             fetch(`http://localhost:8000/alarmDefinition?${params}`, {

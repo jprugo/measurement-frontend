@@ -78,7 +78,7 @@
                                 </li>
                             </ul>
 
-                            <!-- ALARMAS -->
+                        <!-- ALARMAS -->
                         <li class="w-100">
                             <button class="nav-link px-0 align-middle" id="alarmas"
                                 onclick="manejarClicMenu('alarmas.html', '#contenido')">
@@ -87,10 +87,15 @@
                             </button>
                         </li>
 
+                        <li class="w-100">
+                            <button class="nav-link px-0 align-middle" id="alarmas"
+                                onclick="manejarClicMenu('ultimas.html', '#contenido')">
+                                <i class="fs-4 bi-bell"></i>
+                                <span class="ms-1 d-none d-sm-inline">Ultimas</span>
+                            </button>
                         </li>
 
-
-
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -102,7 +107,7 @@
     <script>
         function manejarClicMenu(url, id) {
             //return function () {
-                cargarContenido(url, id);
+            cargarContenido(url, id);
             //};
         }
 
