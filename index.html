@@ -19,7 +19,7 @@
     <script src="js/gigascript.js"></script>
 </head>
 
-<body class="container-fluid" style="padding: 0;">
+<body class="container-fluid" style="padding: 0;" onload="openAlarmModal();">
     <nav class="navbar navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
@@ -28,7 +28,6 @@
             </a>
         </div>
     </nav>
-
     <!-- Barra de menu -->
     <div class="container-fluid">
         <div class="row flex-nowrap">
@@ -102,9 +101,15 @@
             <div class="col py-3 bg-light mt-5" id="contenido"></div>
         </div>
     </div>
-
+    <div class="modal-body m-2" id="modal-body-content" style="visibility: hidden;">
+        <!-- Contenido dinámico se inyectará aquí -->
+    </div>
+    <audio id = 'aud' src = 'audio/alarm.mp3' preload="auto"></audio>
     <!-- Scripts -->
     <script>
+        var loopAudio = false;
+        var audio = document.getElementById('aud');
+
         function manejarClicMenu(url, id) {
             //return function () {
             cargarContenido(url, id);
@@ -132,7 +137,54 @@
                     console.error("Error al recuperar los datos del backend:", error);
                 }
             });
+
         });
+
+        audio.addEventListener('ended', function(){
+            if(loopAudio){
+                audio.play();
+            }
+        });
+
+        function openAlarmModal() {
+            
+            document.getElementById("modal-body-content").style.visibility = "visible";
+
+            const content = `
+                <div class="modal fade bg-danger" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-body">
+                        <span class="text-danger fs-3">Mensaje de error para alarma</span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="hideModal('modal-body-content')">Cerrar</button>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            `;
+            document.getElementById('modal-body-content').innerHTML = content;
+
+            const myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+            myModal.show();
+
+            activateAudio();
+
+        }
+
+        function hideModal(vdivId){
+                       
+            document.getElementById(vdivId).style.display = "none";
+
+            audio.pause();
+        }
+
+        function activateAudio(){
+            audio.play();
+        }
+        
+
     </script>
 </body>
 
