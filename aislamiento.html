@@ -7,8 +7,22 @@
                 data-bs-toggle="collapse" data-bs-target="#menuPrincipal" aria-expanded="false"
                 aria-controls="menuPrincipal" style="margin-left: -3px; margin-top: 5px;"></button></div>
         <div class="col-10"><span class="fs-3 text-muted">Medici&oacute;n Aislamiento</span></div>
-        <div class="col-1 text-end"><i class="bi bi-battery-full"></i>&nbsp;<span class="fs-6 text-muted"
-                style="padding-right: 10px;" id="battery">70%</span></div>
+        <div class="col-1 text-end">
+            <i class="bi bi-battery-full"></i>&nbsp;
+            <span class="fs-6 text-muted" style="padding-right: 10px;" id="battery">70%</span>
+        </div>
+    </div>
+
+     <!-- DASHBOARD-->
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12" style="display: flex;">
+            <div class="card border-light" style="border-radius: 15px; display: flex; justify-content: center;">
+                <div class="card-body">
+                    <span class="fs-6 text-primary">Indice de polaridad: </span>
+                    <span class="fs-6 text-secondary" id="pdSpan">0,0</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row">
@@ -148,38 +162,6 @@
                 fetchBatteryLevel();
                 reloadUsbData();
             });
-
-            async function fetchBatteryLevel() {
-                try {
-                    const response = await fetch('http://localhost:8000/measurement/last', {
-                        method: 'GET',
-                        headers: {
-                            'accept': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-
-                    const data = await response.json();
-                    const batteryMeasurement = data.result.find(measure => measure.measure_type === 'BATTERY');
-
-                    if (batteryMeasurement) {
-                        updateBatteryLevel(batteryMeasurement.value);
-                    } else {
-                        console.log('No battery measurement found');
-                    }
-                } catch (error) {
-                    console.error('Error fetching battery level:', error);
-                }
-            }
-
-            function updateBatteryLevel(level) {
-                const batteryElement = document.getElementById('battery');
-                batteryElement.textContent = level + '%';
-            }
-
 
         </script>
 

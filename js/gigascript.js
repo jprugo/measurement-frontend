@@ -1,18 +1,28 @@
-function pintarTabla(tableBody) {
-    $("#tabla").html('<table class="table table-striped table-hover">' +
-        '<thead>' +
-        '<tr class="table-dark">' +
-        '<th scope="col">#</th>' +
-        '<th scope="col">Fecha</th>' +
-        '<th scope="col">Valor</th>' +
-        '<th scope="col">Tipo</th>' +
-        '</tr>' +
-        '</thead>' +
-        '<tbody>' + tableBody + '</tbody>' +
-        '</table>');
+function pintarTabla(tableBody, measureType) {
+    fileName = `${measureType}-`;
+    $("#tabla").html(
+        `
+        <div class="col-12 text-start">
+            <button class="btn btn-primary flex-fill me-2 bi bi-cloud-download-fill" onclick="exportTableToCSV('${fileName}')">Descargar CSV</button>
+        </div>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr class="table-dark">
+                <th scope="col">#</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Valor</th>
+                <th scope="col">Tipo</th>
+                </tr>
+            </thead>
+        <tbody>
+            ${tableBody}
+        </tbody>
+        </table>
+        `
+        );
 }
 
-function pintarGrafico(pointsObject, title) {
+function pintarGrafico(pointsObject, title, suffix) {
     var _widthGraph = document.getElementById("graph").clientWidth;
 
     var colors = ["#FF6347", "#00CED1", "#FFD700", "#800080", "#32CD32"]
@@ -32,20 +42,26 @@ function pintarGrafico(pointsObject, title) {
     }
 
     var options = {
-        //width: _widthGraph,
-        //theme: "light2",
+        width: _widthGraph,
+        theme: "light2",
         exportEnabled: true,
         interactivityEnabled: true,
         animationEnabled: true,
         showInLegend: true,
         title: { text: title },
         axisY: {
-            gridColor: "white"
+            gridColor: "white",
+            labelFontSize: 11,
+            //suffix: ` ${suffix}`
+            title: suffix,
+            titleFontSize: 14,
         },
         axisX: {
             gridColor: "white",
             valueFormatString: "YYYY-MM-DD HH:mm",
-            labelFontSize: 10,
+            labelFontSize: 11,
+            title: "Timestamp",
+            titleFontSize: 14,
         },
         toolTip: {
             shared: true
@@ -62,7 +78,7 @@ function agregarDatosAlGrafico(newDataPoints) {
 }
 
 // BACKEND
-function cargarDatos(data) {
+function cargarDatos(data, title, suffix) {
     const filteredData = Object.fromEntries(
         Object.entries(data).filter(([_, value]) => value !== null && value !== undefined)
     );
@@ -109,7 +125,7 @@ function cargarDatos(data) {
             });
 
             console.log(dataTypes);
-            pintarGrafico(dataTypes, "Graphic");
+            pintarGrafico(dataTypes, title, suffix);
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -168,7 +184,7 @@ function handleSearch(measureType, detailName) {
         detail: detail
     }
 
-    cargarDatos(data);
+    cargarDatos(data, measureType, getUnitsForMeasureType(measureType));
 }
 
 function formatearFecha(fecha) {
@@ -212,7 +228,7 @@ function getValue(name, data) {
 }
 
 // HANDLERS
-function manejarRelativeButton(interval, intervalType, measure_type, detailName) {
+function manejarRelativeButton(interval, intervalType, measureType, detailName) {
 
     endDate = new Date();
     var startDate = null;
@@ -226,41 +242,13 @@ function manejarRelativeButton(interval, intervalType, measure_type, detailName)
     detail = detailName === null ? null : document.getElementById(detailName).value;
 
     data = {
-        measure_type: measure_type,
+        measure_type: measureType,
         start_date: formatearFecha(startDate),
         end_date: formatearFecha(endDate),
         detail: detail
     }
 
-    cargarDatos(data)
-}
-
-function fetchBatteryLevel() {
-    fetch("http://localhost:8000/measurement/last", {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            return response.json();
-        })
-        .then(data => {
-            const batteryData = data.result.find(item => item.measure_type === "BATTERY");
-
-            if (batteryData) {
-                const batterySpan = document.getElementById('battery');
-                batterySpan.textContent = `${batteryData.value}%`;
-            } else {
-                console.log("No se encontró información de batería.");
-            }
-        })
-        .catch(error => {
-            console.error("Error last measurement:", error);
-        });
+    cargarDatos(data, measureType, getUnitsForMeasureType(measureType));
 }
 
 function reloadUsbData() {
@@ -342,4 +330,76 @@ function exportData(measureType, detailName) {
         .catch(error => {
             console.error("Error exporting data:", error);
         });
+}
+
+async function fetchBatteryLevel() {
+    try {
+        const response = await fetch('http://localhost:8000/measurement/last', {
+            method: 'GET',
+            headers: {
+                'accept': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        const batteryMeasurement = data.result.find(measure => measure.measure_type === 'BATTERY');
+
+        if (batteryMeasurement) {
+            updateBatteryLevel(batteryMeasurement.value);
+        } else {
+            console.log('No battery measurement found');
+        }
+    } catch (error) {
+        console.error('Error fetching battery level:', error);
+    }
+}
+
+function updateBatteryLevel(level) {
+    const batteryElement = document.getElementById('battery');
+    batteryElement.textContent = level + '%';
+}
+
+function getUnitsForMeasureType(measureType){
+    return "units";
+}
+
+function exportTableToCSV(filename) {
+    var csv = [];
+    var rows = document.querySelectorAll("table tr");
+
+    for (var i = 0; i < rows.length; i++) {
+        var row = [], cols = rows[i].querySelectorAll("td, th");
+        
+        for (var j = 0; j < cols.length; j++) 
+            row.push(cols[j].innerText);
+        
+        csv.push(row.join(","));
+    }
+
+    downloadCSV(csv.join("\n"), filename);
+}
+
+function downloadCSV(csv, filename) {
+    var csvFile;
+    var downloadLink;
+
+    csvFile = new Blob([csv], {type: "text/csv"});
+
+    downloadLink = document.createElement("a");
+
+    downloadLink.download = filename + ".csv";
+
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+
+    downloadLink.style.display = "none";
+
+    document.body.appendChild(downloadLink);
+
+    downloadLink.click();
+
+    document.body.removeChild(downloadLink);
 }
