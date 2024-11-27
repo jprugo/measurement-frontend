@@ -77,7 +77,7 @@
                                 </li>
                             </ul>
 
-                        <!-- ALARMAS -->
+                            <!-- ALARMAS -->
                         <li class="w-100">
                             <button class="nav-link px-0 align-middle" id="alarmas"
                                 onclick="manejarClicMenu('alarmas.html', '#contenido')">
@@ -102,18 +102,29 @@
         </div>
     </div>
     <div class="modal-body m-2" id="modal-body-content" style="visibility: hidden;">
-        <!-- Contenido dinámico se inyectará aquí -->
     </div>
-    <audio id = 'aud' src = 'audio/alarm.mp3' preload="auto"></audio>
     <!-- Scripts -->
     <script>
-        var loopAudio = false;
-        var audio = document.getElementById('aud');
 
         function manejarClicMenu(url, id) {
-            //return function () {
             cargarContenido(url, id);
-            //};
+        }
+
+        function listen(url) {
+            const source = new EventSource(url);
+
+            source.addEventListener('message', function (event) {
+                console.log('Nuevo mensaje del servidor:', event.data);
+            });
+
+            source.addEventListener('customEvent', function (event) {
+                console.log('Evento personalizado recibido:', event.data);
+                openAlarmModal();
+            });
+
+            source.addEventListener('close', function () {
+                console.log('Conexión SSE cerrada');
+            });
         }
 
         $(document).ready(function () {
@@ -132,6 +143,7 @@
                     });
 
                     document.getElementById('submenu1').innerHTML = content;
+                    listen("http://localhost:8000/alarming/alarm/event");
                 },
                 error: function (xhr, status, error) {
                     console.error("Error al recuperar los datos del backend:", error);
@@ -140,14 +152,8 @@
 
         });
 
-        audio.addEventListener('ended', function(){
-            if(loopAudio){
-                audio.play();
-            }
-        });
-
         function openAlarmModal() {
-            
+
             document.getElementById("modal-body-content").style.visibility = "visible";
 
             const content = `
@@ -168,22 +174,12 @@
 
             const myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
             myModal.show();
-
-            activateAudio();
-
         }
 
-        function hideModal(vdivId){
-                       
+        function hideModal(vdivId) {
             document.getElementById(vdivId).style.display = "none";
-
             audio.pause();
         }
-
-        function activateAudio(){
-            audio.play();
-        }
-        
 
     </script>
 </body>
