@@ -51,17 +51,19 @@ function pintarGrafico(pointsObject, title, suffix) {
         title: { text: title },
         axisY: {
             gridColor: "white",
-            labelFontSize: 11,
+            labelFontSize: 16,
+            labelFontColor: "black",
             //suffix: ` ${suffix}`
             title: suffix,
-            titleFontSize: 14,
+            titleFontSize: 16,
         },
         axisX: {
             gridColor: "white",
-            valueFormatString: "YYYY-MM-DD HH:mm",
-            labelFontSize: 11,
+            valueFormatString: "HH:mm:ss",
+            labelFontSize: 16,
+            labelFontColor: "black",
             title: "Timestamp",
-            titleFontSize: 14,
+            titleFontSize: 16,
         },
         toolTip: {
             shared: true
