@@ -1,19 +1,19 @@
 <html lang="es">
     <body>
         <div class="container-fluid">
-            <div class="row mb-1 text-muted pt-4">
-                <h2>Alarmas</h2>
-            </div>
+            <div class="row mb-2 text-muted pt-4">
+                <div class="col-6">
+                    <h2>Alarmas</h2>
+                </div>
+                <div class="col-6 text-end">
+                    <button class="btn btn-primary bi bi-cloud-download-fill" onclick="exportTableToCSV('alarmas')">Descargar CSV</button>
+                </div>
+            </div>            
             <div class="row" style="height: 90%;">
                 <div class="col-lg-12 col-md-12 col-sm-12">
                     <div class="row pb-2">
                         <div class="col-12">
                             <div class="card border-light pt-3 ps-3 pe-3" style="border-radius: 15px; height:auto">
-                                <div class="row text-start ps-4">
-                                    <div class="col-12 text-start">
-                                        <button class="btn btn-primary flex-fill me-2 bi bi-cloud-download-fill" onclick="exportTableToCSV('alarmas')">Descargar CSV</button>
-                                    </div>
-                                </div>
                                 <div class="card-body">
                                     <div id="tabla" style="height: 90%; max-height: 90%; overflow:auto;">
                                         <table class="table fs-5">
