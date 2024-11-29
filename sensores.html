@@ -165,18 +165,18 @@
                 <input type="hidden" class="form-control" id="newId" name="newId" value="0">
 
                 <div class="row mb-3 text-secondary">
-                    <div class="col-sm-3">
-                        <span class="col-sm-3 col-form-label">Marca</span>
+                    <div class="col-sm-6">
+                        <span class="form-label">Marca</span>
                         <input type="text" class="form-control" id="newBrand" name="newBrand" placeholder="0">
                     </div>
-                    <div class="col-sm-3">
-                        <span class="col-sm-3 col-form-label">Referencia</span>
+                    <div class="col-sm-6">
+                        <span class="form-label">Referencia</span>
                         <input type="text" class="form-control" id="newReference" name="newReference" placeholder="0">
                     </div>
                 </div>
 
                 <div class="row mb-3 text-secondary">
-                    <div class="col-sm-3">
+                    <div class="col-sm-12">
                         <span class="col-sm-3 col-form-label">Tipo sensor</span>
                         <select class="form-select" id="newSensorType" name="newSensorType">
                             <option value="WELL">SENSOR POZO</option>
@@ -189,28 +189,23 @@
                 <!-- Measurement Spec -->
                 <div id="measurement-specs-container">
                     <div class="row mb-3">
-                        <div class="col-sm-2">
-                            <label class="form-label">Tipo de Medida</label>
-                            <div class="col-sm-3">
-                                <span class="col-sm-3 col-form-label">Tipo sensor</span>
-                                <select class="form-select" id="specType_0" name="specType_0">
-                                    <option value="ISOLATION">AISLAMIENTO</option>
-                                    <option value="RESISTANCE">RESISTENCIA</option>
-                                    <option value="PRESSURE">PRESION</option>
-                                </select>
-                            </div>
+                        <div class="col-sm-5">
+                            <label class="form-label">Tipo de Medida</label>                            
+                            <select class="form-select" id="specType_0" name="specType_0">
+                                <option value="ISOLATION">AISLAMIENTO</option>
+                                <option value="RESISTANCE">RESISTENCIA</option>
+                                <option value="PRESSURE">PRESION</option>
+                            </select>
                         </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-5">
                             <label class="form-label">Unidad</label>
-                            <div class="col-sm-3">
-                                <span class="col-sm-3 col-form-label">Tipo sensor</span>
-                                <select class="form-select" id="specUnit_0" name="specUnit_0">
-                                    <option value="μΩ">μΩ</option>
-                                    <option value="°C">°C</option>
-                                </select>
-                            </div>
+                            <select class="form-select" id="specUnit_0" name="specUnit_0">
+                                <option value="μΩ">μΩ</option>
+                                <option value="°C">°C</option>
+                            </select>
                         </div>
                     </div>
+                        
                 </div>
 
                 <button type="button" class="btn btn-success" onclick="agregarMeasurementSpec()">Agregar Medición</button>
@@ -235,7 +230,7 @@
             // Insertar una nueva fila de input para el measurement_spec
             const newMeasurementSpec = `
                 <div class="row mb-3" id="specRow_${newSpecId}">
-                    <div class="col-sm-2">
+                    <div class="col-sm-5">
                         <label class="form-label">Tipo de Medida</label>
                         <select class="form-select" id="specType_${newSpecId}" oninput="updateMeasurementSpec(${newSpecId})">
                                     <option value="ISOLATION">AISLAMIENTO</option>
@@ -243,18 +238,15 @@
                                     <option value="PRESSURE">PRESION</option>
                         </select>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-5">
                         <label class="form-label">Unidad</label>
-                        <div class="col-sm-3">
-                                <span class="col-sm-3 col-form-label">Tipo sensor</span>
-                                <select class="form-select" id="specUnit_${newSpecId}" oninput="updateMeasurementSpec(${newSpecId})">
+                        <select class="form-select" id="specUnit_${newSpecId}" oninput="updateMeasurementSpec(${newSpecId})">
                                     <option value="μΩ">μΩ</option>
                                     <option value="°C">°C</option>
                                 </select>
-                        </div>
                     </div>
-                    <div class="col-sm-1">
-                        <button type="button" class="btn btn-danger" onclick="eliminarMeasurementSpec(${newSpecId})">Eliminar</button>
+                    <div class="col-sm-2" style="display: flex; flex-direction: column; justify-content: flex-end;">
+                        <button type="button" class="btn btn-danger bi bi-trash3-fill" onclick="eliminarMeasurementSpec(${newSpecId})"></button>
                     </div>
                 </div>
             `;
