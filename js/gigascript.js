@@ -2,8 +2,8 @@ function pintarTabla(tableBody, measureType) {
     fileName = `${measureType}-`;
     $("#tabla").html(
         `
-        <div class="col-12 text-start">
-            <button class="btn btn-primary flex-fill me-2 bi bi-cloud-download-fill" onclick="exportTableToCSV('${fileName}')">Descargar CSV</button>
+        <div class="row mb-2 text-muted">
+            <button class="btn btn-primary bi bi-cloud-download-fill" onclick="exportTableToCSV('${fileName}')">Descargar CSV</button>
         </div>
         <table class="table table-striped table-hover">
             <thead>
