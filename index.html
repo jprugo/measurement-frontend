@@ -57,28 +57,28 @@
                                 <li class="w-100">
                                     <button class="nav-link px-0 align-middle" id="configuracion"
                                         onclick="manejarClicMenu('configuracion.html', '#contenido')">
-                                        <i class="fs-4 bi-palette"></i>
+                                        <i class="fs-4 bi-wrench"></i>
                                         <span class="ms-1 d-none d-sm-inline">Propiedades</span>
                                     </button>
                                 </li>
                                 <li class="w-100">
                                     <button class="nav-link px-0 align-middle" id="configuracionalarmas"
                                         onclick="manejarClicMenu('configuracionalarmas.html', '#contenido')">
-                                        <i class="fs-4 bi-palette"></i>
+                                        <i class="fs-4 bi-alarm"></i>
                                         <span class="ms-1 d-none d-sm-inline">Alarmas</span>
                                     </button>
                                 </li>
                                 <li class="w-100">
                                     <button class="nav-link px-0 align-middle" id="definicionpasos"
                                         onclick="manejarClicMenu('definicionpasos.html', '#contenido')">
-                                        <i class="fs-4 bi-stopwatch"></i>
+                                        <i class="fs-4 bi-list-ol"></i>
                                         <span class="ms-1 d-none d-sm-inline">Pasos</span>
                                     </button>
                                 </li>
                                 <li class="w-100">
                                     <button class="nav-link px-0 align-middle" id="sensores"
                                         onclick="manejarClicMenu('sensores.html', '#contenido')">
-                                        <i class="fs-4 bi-stopwatch"></i>
+                                        <i class="fs-4 bi-thermometer"></i>
                                         <span class="ms-1 d-none d-sm-inline">Sensores</span>
                                     </button>
                                 </li>
@@ -96,7 +96,7 @@
                         <li class="w-100">
                             <button class="nav-link px-0 align-middle" id="alarmas"
                                 onclick="manejarClicMenu('ultimas.html', '#contenido')">
-                                <i class="fs-4 bi-bell"></i>
+                                <i class="fs-4 bi-flag"></i>
                                 <span class="ms-1 d-none d-sm-inline">Ultimas</span>
                             </button>
                         </li>
@@ -149,7 +149,7 @@
                     });
 
                     document.getElementById('submenu1').innerHTML = content;
-                    listen("http://localhost:8000/alarming/alarm/event");
+                    //listen("http://localhost:8000/alarming/alarm/event");
                 },
                 error: function (xhr, status, error) {
                     console.error("Error al recuperar los datos del backend:", error);
@@ -184,7 +184,6 @@
 
         function hideModal(vdivId) {
             document.getElementById(vdivId).style.display = "none";
-            audio.pause();
         }
 
     </script>

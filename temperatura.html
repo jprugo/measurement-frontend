@@ -1,9 +1,5 @@
 <html>
 
-<head>
-    <script src="js/usb.js"></script>
-</head>
-
 <body>
 
     <div class="row mb-1 text-muted" style="display: flex;">
@@ -68,8 +64,6 @@
                                             <button type="button" class="btn btn-outline-secondary bi bi-calendar-fill"
                                                 id="fechas" data-bs-toggle="modal"
                                                 data-bs-target="#staticBackdrop"></button>
-                                            <button type="button" class="btn btn-outline-secondary bi bi-usb-symbol"
-                                                id="usb" data-bs-toggle="modal" data-bs-target="#modalUsb"></button>
                                         </div>
                                     </div>
                                     <div class="row text-muted float-end mt-3" id="divFechas">
@@ -82,7 +76,7 @@
                     </div>
                     <div class="row mb-1 border-light text-secondary">
                         <div class="col-12">
-                            <div id="graph" style="height: auto; max-height: 80%; width: 100%;">
+                            <div id="graph" style="height: 60vh; width: 100%;">
                             </div>
                         </div>
                     </div>
@@ -129,46 +123,19 @@
         </div>
     </div>
 
-    <!-- MODAL DE USB -->
-    <div class="modal fade" id="modalUsb" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Seleccione una USB</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-8">
-                            <select class="form-select" aria-label="Default select example" id="usbselect"></select>
-                        </div>
-                        <div class="col-4">
-                            <button class="btn btn-primary" onclick="reloadUsbData()"><span
-                                    class="glyphicon glyphicon-refresh"></span> Refresh</button>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
-                            onclick="exportData('TEMPERATURE', 'temperatureType')">Guardar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- ********************************* -->
+    <!-- Scripts -->
+    <script>
+        $(document).ready(function () {
+            
+            pintarGrafico([], 'TEMPERATURE', getUnitsForMeasureType('TEMPERATURE'));
+            fetchBatteryLevel();
 
-        <!-- Scripts -->
-        <script>
-
-            $(document).ready(function () {
-                //loadDashboardData();
+            $(window).resize(function() {
                 pintarGrafico([]);
-                fetchBatteryLevel();
-                reloadUsbData();
             });
+        });
 
-        </script>
+    </script>
 </body>
 
 </html>

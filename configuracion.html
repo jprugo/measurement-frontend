@@ -66,12 +66,10 @@
         }
 
         function putItemsList(items) {
-            content = ``;
+            let content = ``;
             items.forEach(item => {
-                console.log(item);
-                console.log(item.id);
                 content += `
-                <div class="row mb-2 text-secondary">
+                <div class="row mb-2 text-secondary" id="config-item-${item.id}">
                     <div class="col-sm-4 mb-3">
                         <label for="${item.name}Input" class="form-label">${item.name}</label>
                     </div>
@@ -87,19 +85,7 @@
                     </div>
                     <hr>
                 </div>
-
-                <!--
-                <div class="row pb-2">
-                        <div class="col-sm-6 offset-sm-3">
-                            <div class="d-flex justify-content-between">
-                                <button class="btn btn-primary flex-fill me-2" onclick="actualizarConfiguracion(${item.id}, '${item.name}')">Guardar</button>
-                                <button class="btn btn-danger flex-fill" onclick="eliminarConfiguracion(${item.id}, '${item.name}')">Eliminar</button>
-                            </div>
-                        </div>
-                    </div>
-                -->
-                
-                `
+                `;
             });
 
             document.getElementById('list-config').innerHTML = content;
@@ -131,7 +117,6 @@
                     console.error("Error al recuperar los datos del backend:", error);
                 });
         }
-
 
         function openConfiguracionModal() {
             const content = `
@@ -183,16 +168,13 @@
                 })
                 .catch(error => {
                     console.error("Error al recuperar los datos del backend:", error);
-                }
-                )
+                })
         }
 
         function eliminarConfiguracion(id, name) {
-            const value = document.getElementById(`${name}Input`).value;
-
             const params = new URLSearchParams({
                 id: id,
-                value: value
+                value: document.getElementById(`${name}Input`).value
             });
 
             fetch(`http://localhost:8000/configuration?${params}`, {
@@ -205,38 +187,12 @@
                     if (!response.ok) {
                         throw new Error('Error en la solicitud: ' + response.statusText);
                     }
-                })
-                .then(data => {
+                    // Después de eliminar el elemento, actualizamos la lista
+                    document.getElementById(`config-item-${id}`).remove(); // Eliminamos el elemento del DOM
                     alert("Elemento de configuración eliminado.");
                 })
                 .catch(error => {
-                    console.error("Error al recuperar los datos del backend:", error);
-                });
-        }
-
-        function crearConfiguracion() {
-            const params = new URLSearchParams({
-                name: 'dummy',
-                value: 'dummyValue',
-                treatment_as: 'STRING'
-            });
-
-            fetch(`http://localhost:8000/configuration?${params}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error en la solicitud: ' + response.statusText);
-                    }
-                })
-                .then(data => {
-                    alert("Elemento de configuración creado.");
-                })
-                .catch(error => {
-                    console.error("Error al recuperar los datos del backend:", error);
+                    console.error("Error al eliminar:", error);
                 });
         }
 

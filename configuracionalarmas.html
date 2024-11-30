@@ -54,6 +54,8 @@
     </div>
 
     <script>
+        let CAsensorTypes = [];
+
         $(document).ready(function () {
             makeRequest();
         });
@@ -64,11 +66,24 @@
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
-                    items = data.result;
+                    let items = data.result;
                     putItemsList(items);
                 },
                 error: function (xhr, status, error) {
                     console.error("Error al recuperar los datos del backend:", error);
+                }
+            });
+
+            // Cargar los tipos de medidas para el modal
+            $.ajax({
+                url: "http://localhost:8000/measurement/measureTypes",
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    CAsensorTypes = data.result;
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al recuperar los tipos de medidas:", error);
                 }
             });
         }
@@ -76,6 +91,14 @@
         function putItemsList(items) {
             let content = '';
             items.forEach(item => {
+                let CAmeasureTypeOptsContent = ''; 
+
+                CAsensorTypes.forEach(s => { 
+                    CAmeasureTypeOptsContent += `
+                        <option value="${s}" ${item.measure_type === s ? 'selected' : ''} >${s}</option>
+                    `;
+                });
+
                 content += `
                     <input type="hidden" class="form-control" id="id" name="id" value="${item.id}" placeholder="0">
 
@@ -84,11 +107,7 @@
                         <div class="col-sm-5 pb-2">
                             <label class="form-label" for="${item.id}measure_type">Medidas</label>
                             <select class="form-select" id="${item.id}measure_type" name="${item.id}measure_type">
-                                <option value="ISOLATION" ${item.measure_type === 'ISOLATION' ? 'selected' : ''}>AISLAMIENTO</option>
-                                <option value="RESISTANCE" ${item.measure_type === 'RESISTANCE' ? 'selected' : ''}>RESISTENCIA</option>
-                                <option value="PRESSURE" ${item.measure_type === 'PRESSURE' ? 'selected' : ''}>PRESIÓN</option>
-                                <option value="TEMPERATURE" ${item.measure_type === 'TEMPERATURE' ? 'selected' : ''}>TEMPERATURA</option>
-                                <option value="VIBRATION" ${item.measure_type === 'VIBRATION' ? 'selected' : ''}>VIBRACIÓN</option>
+                                ${CAmeasureTypeOptsContent}
                             </select>
                         </div>
 
@@ -100,9 +119,9 @@
                         <div class="col-sm-4 pb-2">
                             <label class="form-label" for="${item.id}alarm_type">Alarma</label>
                             <select class="form-select" name="${item.id}alarm_type" id="${item.id}alarm_type">
-                                    <option value="DESVEST" ${item.alarm_type === 'DESVEST' ? 'selected' : ''}>DESVEST</option>
-                                    <option value="LOWER_THAN" ${item.alarm_type === 'LOWER_THAN' ? 'selected' : ''}>MENOR QUE</option>
-                                    <option value="GREATER_THAN" ${item.alarm_type === 'GREATER_THAN' ? 'selected' : ''}>MAYOR QUE</option>
+                                <option value="DESVEST" ${item.alarm_type === 'DESVEST' ? 'selected' : ''}>DESVEST</option>
+                                <option value="LOWER_THAN" ${item.alarm_type === 'LOWER_THAN' ? 'selected' : ''}>MENOR QUE</option>
+                                <option value="GREATER_THAN" ${item.alarm_type === 'GREATER_THAN' ? 'selected' : ''}>MAYOR QUE</option>
                             </select>
                         </div>
 
@@ -114,7 +133,7 @@
                         <div class="col-sm-3 pb-2">
                             <label class="form-label" for="${item.id}active">Habilitada</label>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="${item.id}enabled" ${item.enabled === true ? 'checked' : ''}>
+                                <input class="form-check-input" type="checkbox" role="switch" id="${item.id}enabled" ${item.enabled ? 'checked' : ''}>
                             </div>
                         </div>
                     </div>
@@ -123,8 +142,8 @@
                     <div class="row pb-2">
                         <div class="col-sm-12">
                             <div class="d-flex justify-content-between">
-                                <button class="btn btn-primary flex-fill me-2 bi bi-save2-fill" onclick="actualizarConfiguracionAlarmas(${item.id})"></button>
-                                <button class="btn btn-danger flex-fill bi bi-trash2-fill" onclick="eliminarConfiguracionAlarmas(${item.id})"></button>
+                                <button class="btn btn-primary flex-fill me-2" onclick="actualizarConfiguracionAlarmas(${item.id})"><i class="bi bi-save2-fill"></i> Guardar</button>
+                                <button class="btn btn-danger flex-fill" onclick="eliminarConfiguracionAlarmas(${item.id})"><i class="bi bi-trash2-fill"></i> Eliminar</button>
                             </div>
                         </div>
                     </div>
@@ -132,6 +151,8 @@
                     <hr>
                 `;
             });
+
+            // Insertar el contenido generado en el DOM
             document.getElementById('alarmconfig-list').innerHTML = content;
         }
 
@@ -164,19 +185,15 @@
                 })
                 .then(data => {
                     alert("Elemento de configuración de alarma actualizado.");
+                    makeRequest();
                 })
                 .catch(error => {
-                    console.error("Error al recuperar los datos del backend:", error);
+                    console.error("Error al actualizar:", error);
                 });
-
         }
 
         function eliminarConfiguracionAlarmas(id) {
-    
-            const params = new URLSearchParams({
-                id: id,
-
-            });
+            const params = new URLSearchParams({ id: id });
 
             fetch(`http://localhost:8000/alarmDefinition?${params}`, {
                 method: 'DELETE',
@@ -191,24 +208,28 @@
                 })
                 .then(data => {
                     alert("Elemento de configuración de alarma eliminado.");
+                    makeRequest();
                 })
                 .catch(error => {
                     console.error("Error al eliminar:", error);
                 });
-
         }
 
         function openConfiguracionModal() {
+            let measureTypeOptsContent = '';
+            if (CAsensorTypes) {
+                CAsensorTypes.forEach(sensor => {
+                    measureTypeOptsContent += `<option value="${sensor}">${sensor}</option>`;
+                });
+            }
+
             const content = `
                 <div class="row mb-3 text-secondary">
                     <div class="col-sm-5 offset-sm-1">
                         <label class="form-label">Medida</label>
                         <select class="form-select" id="newMeasureType" name="newMeasureType">
-                            <option value="ISOLATION">AISLAMIENTO</option>
-                            <option value="RESISTANCE">RESISTENCIA</option>
-                            <option value="PRESSURE">PRESIÓN</option>
-                            <option value="TEMPERATURE">TEMPERATURA</option>
-                            <option value="VIBRATION">VIBRACIÓN</option>
+                            <option>Seleccione</option>
+                            ${measureTypeOptsContent}
                         </select>
                     </div>
 
@@ -233,8 +254,9 @@
                         <input type="text" class="form-control" id="newSoundPath" name="newSoundPath" value="">
                     </div>
                 </div>
-
             `;
+
+            // Mostrar el modal
             document.getElementById('modal-body-content').innerHTML = content;
 
             const myModal = new bootstrap.Modal(document.getElementById('configuracionModal'));
@@ -268,9 +290,9 @@
             })
             .then(data => {
                 alert("Configuración de alarma creada.");
-                makeRequest(); // Refresca la lista
+                makeRequest();
                 const myModal = bootstrap.Modal.getInstance(document.getElementById('configuracionModal'));
-                myModal.hide(); // Cierra el modal
+                myModal.hide();
             })
             .catch(error => {
                 console.error("Error al recuperar los datos del backend:", error);

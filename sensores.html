@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuracion de Sensores</title>
+    <title>Configuración de Sensores</title>
     <!-- Incluye Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -56,6 +56,10 @@
     </div>
 
     <script>
+        let SsensorTypeOptsContent = '';
+        let SmeasureTypeOptsContent = '';
+        let SunitsOptsContent = '';
+
         $(document).ready(function () {
             makeRequest();
         });
@@ -66,11 +70,29 @@
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
-                    result = data.result;
+                    const result = data.result;
                     putItemsList(result);
                 },
                 error: function (xhr, status, error) {
-                    console.error("Error al recuperar los datos del backend:", error);
+                    console.error("Error al recuperar los sensores configurados:", error);
+                }
+            });
+
+            $.ajax({
+                url: "http://localhost:8000/measurement/sensorTypes",
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+                    const result = data.result;
+                    result.forEach(s => { 
+                        SsensorTypeOptsContent += `
+                            <option value="${s}">${s}</option>
+                        `;
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al recuperar los tipos de sensores:", error);
                 }
             });
         }
@@ -78,7 +100,7 @@
         function putItemsList(items) {
             let content = '';
             items.forEach(item => {
-                content2 = '';
+                let content2 = '';
                 item.measurement_spec.forEach(ms => {
                     content2 += ` 
                         <div class="row mb-3 text-secondary">
@@ -95,38 +117,40 @@
                 });
 
                 content += `
-                    <input type="hidden" class="form-control" id="id" name="id" value="${item.id}" placeholder="0">
-
-                    <!-- Formulario -->
-                    <div class="row mb-3 text-secondary">
-                        <div class="col-sm-2">
-                            <label class="form-label" for="${item.id}brand">Marca</label>
-                            <input type="text" class="form-control" id="${item.id}brand" name="${item.id}brand" value="${item.brand}" placeholder="0" disabled>
-                        </div>
-                        <div class="col-sm-2">
-                            <label class="form-label" for="${item.id}reference">Referencia</label>
-                            <input type="text" class="form-control" id="${item.id}reference" name="${item.id}reference" value="${item.reference}" placeholder="0" disabled>
-                        </div>
-                        <div class="col-sm-3">
-                            <label class="form-label" for="${item.id}sensor_type">Tipo de Sensor</label>
-                            <input type="text" class="form-control" id="${item.id}sensor_type" name="${item.id}sensor_type" value="${item.sensor_type}" placeholder="0" disabled>
-                        </div>
-                    </div>
-
-                    <div id="measurement-specs-container-2">
-                        ${content2}
-                    </div>
-
-                    <!-- BOTONERA -->
-                    <div class="row pb-2">
-                        <div class="col-sm-12">
-                            <div class="d-flex justify-content-between">
-                                <button class="btn btn-danger flex-fill bi bi-trash2-fill" onclick="eliminarSensor(${item.id})"></button>
+                    
+                    <div id="sensor-${item.id}">
+                        <input type="hidden" class="form-control" id="id" name="id" value="${item.id}" placeholder="0">
+                        <!-- Formulario -->
+                        <div class="row mb-3 text-secondary">
+                            <div class="col-sm-2">
+                                <label class="form-label" for="${item.id}brand">Marca</label>
+                                <input type="text" class="form-control" id="${item.id}brand" name="${item.id}brand" value="${item.brand}" placeholder="0" disabled>
+                            </div>
+                            <div class="col-sm-2">
+                                <label class="form-label" for="${item.id}reference">Referencia</label>
+                                <input type="text" class="form-control" id="${item.id}reference" name="${item.id}reference" value="${item.reference}" placeholder="0" disabled>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="form-label" for="${item.id}sensor_type">Tipo de Sensor</label>
+                                <input type="text" class="form-control" id="${item.id}sensor_type" name="${item.id}sensor_type" value="${item.sensor_type}" placeholder="0" disabled>
                             </div>
                         </div>
-                    </div>
 
-                    <hr>
+                        <div id="measurement-specs-container-2">
+                            ${content2}
+                        </div>
+
+                        <!-- BOTONERA -->
+                        <div class="row pb-2">
+                            <div class="col-sm-12">
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-danger flex-fill bi bi-trash2-fill" onclick="eliminarSensor(${item.id})"></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+                    </div>
                 `;
             });
 
@@ -144,23 +168,22 @@
                     'Content-Type': 'application/json'
                 }
             })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error en la solicitud: ' + response.statusText);
-                    }
-                })
-                .then(data => {
-                    alert("Sensor eliminado.");
-                })
-                .catch(error => {
-                    console.error("Error al eliminar:", error);
-                });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud: ' + response.statusText);
+                }
+
+                document.getElementById(`sensor-${id}`).remove();
+                alert("Sensor eliminado.");
+            })
+            .catch(error => {
+                console.error("Error al eliminar:", error);
+            });
         }
 
         let measurementSpecsList = [];
 
-        function crearSensor() {
-            // Contenido inicial del modal
+        function crearSensor() {    
             const content = `
                 <input type="hidden" class="form-control" id="newId" name="newId" value="0">
 
@@ -178,34 +201,15 @@
                 <div class="row mb-3 text-secondary">
                     <div class="col-sm-12">
                         <span class="col-sm-3 col-form-label">Tipo sensor</span>
-                        <select class="form-select" id="newSensorType" name="newSensorType">
-                            <option value="WELL">SENSOR POZO</option>
-                            <option value="ISO">SENSOR AISLAMIENTO</option>
-                            <option value="RES">SENSOR RESISTENCIA</option>
+                        <select class="form-select" id="newSensorType" name="newSensorType" onchange="handleSensorTypeChange()">
+                            <option>Seleccione</option>
+                            ${SsensorTypeOptsContent}
                         </select>
                     </div>
                 </div>
 
                 <!-- Measurement Spec -->
-                <div id="measurement-specs-container">
-                    <div class="row mb-3">
-                        <div class="col-sm-5">
-                            <label class="form-label">Tipo de Medida</label>                            
-                            <select class="form-select" id="specType_0" name="specType_0">
-                                <option value="ISOLATION">AISLAMIENTO</option>
-                                <option value="RESISTANCE">RESISTENCIA</option>
-                                <option value="PRESSURE">PRESION</option>
-                            </select>
-                        </div>
-                        <div class="col-sm-5">
-                            <label class="form-label">Unidad</label>
-                            <select class="form-select" id="specUnit_0" name="specUnit_0">
-                                <option value="μΩ">μΩ</option>
-                                <option value="°C">°C</option>
-                            </select>
-                        </div>
-                    </div>
-                        
+                <div id="measurement-specs-container">    
                 </div>
 
                 <button type="button" class="btn btn-success" onclick="agregarMeasurementSpec()">Agregar Medición</button>
@@ -213,37 +217,33 @@
 
             document.getElementById('modal-body-content').innerHTML = content;
 
-            // Muestra el modal
             const myModal = new bootstrap.Modal(document.getElementById('definicionModal'));
+
             myModal.show();
         }
-
         function agregarMeasurementSpec() {
             const newSpecId = measurementSpecsList.length;
 
-            // Agregar un nuevo measurement_spec en el array
             measurementSpecsList.push({
-                type: '',
+                measure_type: '',
                 unit: ''
             });
 
-            // Insertar una nueva fila de input para el measurement_spec
             const newMeasurementSpec = `
                 <div class="row mb-3" id="specRow_${newSpecId}">
                     <div class="col-sm-5">
                         <label class="form-label">Tipo de Medida</label>
-                        <select class="form-select" id="specType_${newSpecId}" oninput="updateMeasurementSpec(${newSpecId})">
-                                    <option value="ISOLATION">AISLAMIENTO</option>
-                                    <option value="RESISTANCE">RESISTENCIA</option>
-                                    <option value="PRESSURE">PRESION</option>
+                        <select class="form-select" id="specType_${newSpecId}" onchange="handleMeasureTypeChange(this, ${newSpecId})">
+                            <option>Seleccione</option>
+                            ${SmeasureTypeOptsContent}
                         </select>
                     </div>
                     <div class="col-sm-5">
                         <label class="form-label">Unidad</label>
-                        <select class="form-select" id="specUnit_${newSpecId}" oninput="updateMeasurementSpec(${newSpecId})">
-                                    <option value="μΩ">μΩ</option>
-                                    <option value="°C">°C</option>
-                                </select>
+                        <select class="form-select" id="specUnit_${newSpecId}" onchange="handleUnitChange(this, ${newSpecId})">
+                            <option>Seleccione</option>
+                            ${SunitsOptsContent}
+                        </select>
                     </div>
                     <div class="col-sm-2" style="display: flex; flex-direction: column; justify-content: flex-end;">
                         <button type="button" class="btn btn-danger bi bi-trash3-fill" onclick="eliminarMeasurementSpec(${newSpecId})"></button>
@@ -254,37 +254,122 @@
             document.getElementById('measurement-specs-container').insertAdjacentHTML('beforeend', newMeasurementSpec);
         }
 
-        function eliminarMeasurementSpec(id) {
-            // Eliminar el spec de la lista
-            measurementSpecsList.splice(id, 1);
+        function handleSensorTypeChange() {
+            const selectedSensorType = document.getElementById('newSensorType').value;
+            console.log(`Cambio sensor type ${selectedSensorType}`);
 
-            // Eliminar el HTML correspondiente
+            SmeasureTypeOptsContent = ''; 
+
+            $.ajax({
+                url: `http://localhost:8000/measurement/measureTypesBySensor?sensor_type=${selectedSensorType}`,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+                    const result = data.result;
+                    result.forEach(m => { 
+                        SmeasureTypeOptsContent += `
+                            <option value="${m}">${m}</option>
+                        `;
+                    });
+
+                    updateMeasurementSpecSelectors();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al recuperar los tipos de medidas del sensor : ", error);
+                }
+            });
+        }
+
+        function handleMeasureTypeChange(element, id) {
+            const selectedMeasureType = element.value;
+            console.log(`Cambio measure type ${id}: ${selectedMeasureType}`);
+
+            measurementSpecsList[id].measure_type = selectedMeasureType;
+
+            SunitsOptsContent = '';
+
+            $.ajax({
+                url: `http://localhost:8000/measurement/units?measure_type=${selectedMeasureType}`,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+                    const result = data.result;
+
+                    result.forEach(m => { 
+                        SunitsOptsContent += `
+                            <option value="${m.value}">${m.value}</option>
+                        `;
+                    });
+
+                    updateUnitSelector(id);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al recuperar las unidades del sensor : ", error);
+                }
+            });
+        }
+
+        function handleUnitChange(element, id) {
+            const selectedMeasureType = element.value;
+        
+            measurementSpecsList[id].unit = selectedMeasureType;
+        }
+
+        function updateMeasurementSpecSelectors() {
+            measurementSpecsList.forEach((spec, index) => {
+                const specTypeSelect = document.getElementById(`specType_${index}`);
+                if (specTypeSelect) {
+                    specTypeSelect.innerHTML = SmeasureTypeOptsContent;
+                }
+            });
+        }
+
+        function updateUnitSelector(id) {
+            const unitSelect = document.getElementById(`specUnit_${id}`);
+            if (unitSelect) {
+                unitSelect.innerHTML = SunitsOptsContent;
+            }
+        }
+
+        function eliminarMeasurementSpec(id) {
+            measurementSpecsList.splice(id, 1);
             document.getElementById(`specRow_${id}`).remove();
         }
 
-        function updateMeasurementSpec(id) {
-            // Actualizar la lista con el valor del input
-            const type = document.getElementById(`specType_${id}`).value;
-            const unit = document.getElementById(`specUnit_${id}`).value;
-
-            measurementSpecsList[id] = { type, unit };
-        }
-
         function guardarSensor() {
-            // Lógica para guardar el sensor y sus measurement_specs
-            const newSensorData = {
+
+            const params = new URLSearchParams({
                 brand: document.getElementById('newBrand').value,
                 reference: document.getElementById('newReference').value,
-                sensorType: document.getElementById('newSensorType').value,
-                measurementSpecs: measurementSpecsList
-            };
+                sensor_type: document.getElementById('newSensorType').value,
+            });
 
-            console.log("Sensor Guardado:", newSensorData);
+            console.log(measurementSpecsList)
 
-            // Aquí puedes hacer un POST o alguna otra acción para guardar el sensor.
-            alert('Sensor Guardado!');
+            fetch(`http://localhost:8000/measurement/sensor?${params}`, {
+                method: 'POST',
+                body: JSON.stringify(measurementSpecsList),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud: ' + response.statusText);
+                }
+                const myModal = bootstrap.Modal.getInstance(document.getElementById('definicionModal'));
+                myModal.hide();
+                makeRequest();
+            })
+            .catch(error => {
+                console.error("Error al guardar sensor:", error);
+            }
+            )
+            
         }
-
+        
     </script>
 </body>
 
