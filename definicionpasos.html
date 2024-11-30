@@ -65,6 +65,8 @@
     </div>
 
     <script>
+        let SDsensorTypes = [];
+
         $(document).ready(function () {
             makeRequest();
         });
@@ -75,11 +77,23 @@
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
-                    result = data.result;
+                    const result = data.result;
                     putItemsList(result);
                 },
                 error: function (xhr, status, error) {
                     console.error("Error al recuperar los datos del backend:", error);
+                }
+            });
+
+            $.ajax({
+                url: "http://localhost:8000/measurement/sensorTypes",
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    SDsensorTypes = data.result;
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al recuperar los tipos de medidas:", error);
                 }
             });
         }
@@ -87,11 +101,16 @@
         function putItemsList(items) {
             let content = '';
             items.forEach(item => {
+                let SDsensorTypeOptsContent = '';
+                SDsensorTypes.forEach(sensor => {
+                    SDsensorTypeOptsContent += `<option value="${sensor}" ${item.sensor_type === sensor ? 'selected' : ''}>${sensor}</option>`;
+                });
+
                 content += `
                     <input type="hidden" class="form-control" id="id" name="id" value="${item.id}" placeholder="0">
 
                     <!-- Formulario -->
-                    <div class="row mb-3 text-secondary">
+                    <div class="row mb-3 text-secondary" id="step-${item.id}">
                         <div class="col-sm-3">
                             <label class="form-label" for="${item.id}position">Posición</label>
                             <select class="form-select" name="${item.id}position" id="${item.id}position">
@@ -119,20 +138,17 @@
                         <div class="col-sm-3">
                             <label class="form-label" for="${item.id}sensor_type">Tipo de Sensor</label>
                             <select class="form-select" id="${item.id}sensor_type" name="${item.id}sensor_type">
-                                <option value="ISO" ${item.sensor_type === 'ISO' ? 'selected' : ''}>SENSOR AISLAMIENTO</option>
-                                <option value="RES" ${item.sensor_type === 'RES' ? 'selected' : ''}>SENSOR RESISTENCIA</option>
-                                <option value="WELL" ${item.sensor_type === 'WELL' ? 'selected' : ''}>SENSOR POZO</option>
+                                ${SDsensorTypeOptsContent}
                             </select>
                         </div>
                     </div>
-
 
                     <!-- BOTONERA -->
                     <div class="row pb-2">
                         <div class="col-sm-12">
                             <div class="d-flex justify-content-between">
                                 <button class="btn btn-primary flex-fill me-2 bi bi-save2-fill" onclick="actualizarDefinicionPasos(${item.id})"></button>
-                                <button class="btn btn-danger flex-fill bi bi-trash2-fill" onclick="eliminarDefinicionPasos(${item.id})"></button>
+                                <button class="btn btn-danger flex-fill bi bi-trash2-fill" onclick="eliminarDefinicionPasos(${item.id}, ${item.id})"></button>
                             </div>
                         </div>
                     </div>
@@ -143,31 +159,27 @@
 
             document.getElementById('stepdefinition-list').innerHTML = content;
         }
-        function eliminarDefinicionPasos(id) {
 
-            const params = new URLSearchParams({
-                id: id,
-
-            });
-
+        function eliminarDefinicionPasos(id, stepId) {
+            const params = new URLSearchParams({ id: id });
             fetch(`http://localhost:8000/worker/stepDefinition?${params}`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Error en la solicitud: ' + response.statusText);
                     }
-                })
-                .then(data => {
-                    alert("Elemento de configuración de alarma eliminado.");
+                    alert("Elemento de configuración de pasos eliminado.");
+                    
+                    const stepElement = document.getElementById(`step-${stepId}`);
+                    stepElement.remove();
+
+                    makeRequest();
                 })
                 .catch(error => {
                     console.error("Error al eliminar:", error);
                 });
-
         }
 
         function actualizarDefinicionPasos(id) {
@@ -188,17 +200,14 @@
 
             fetch(`http://localhost:8000/worker/stepDefinition?${params}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Error en la solicitud: ' + response.statusText);
                     }
-                })
-                .then(data => {
                     alert("Elemento de definición de paso actualizado.");
+                    makeRequest(); // Refresca la lista
                 })
                 .catch(error => {
                     console.error("Error al recuperar los datos del backend:", error);
@@ -206,6 +215,11 @@
         }
 
         function crearDefinicionPasos() {
+            let SDsensorTypeOptsContent = '';
+            SDsensorTypes.forEach(sensor => {
+                SDsensorTypeOptsContent += `<option value="${sensor}">${sensor}</option>`;
+            });
+
             const content = `
                 <input type="hidden" class="form-control" id="newId" name="newId" value="0">
 
@@ -239,9 +253,8 @@
                     <div class="col-sm-3">
                         <span class="col-sm-3 col-form-label">Tipo sensor</span>
                         <select class="form-select" id="newSensorType" name="newSensorType">
-                            <option value="WELL">SENSOR POZO</option>
-                            <option value="ISO">SENSOR AISLAMIENTO</option>
-                            <option value="RES">SENSOR RESISTENCIA</option>
+                            <option>Seleccione</option>
+                            ${SDsensorTypeOptsContent}
                         </select>
                     </div>
                 </div>
@@ -271,21 +284,16 @@
 
             fetch(`http://localhost:8000/worker/stepDefinition?${params}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Error en la solicitud: ' + response.statusText);
                     }
-                    return response.json();
-                })
-                .then(data => {
                     alert("Elemento de definición de paso creado.");
-                    makeRequest(); // Para refrescar la lista
+                    makeRequest();
                     const myModal = bootstrap.Modal.getInstance(document.getElementById('definicionModal'));
-                    myModal.hide(); // Cierra el modal
+                    myModal.hide();
                 })
                 .catch(error => {
                     console.error("Error al recuperar los datos del backend:", error);
