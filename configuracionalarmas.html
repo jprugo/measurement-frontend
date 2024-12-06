@@ -28,14 +28,16 @@
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary mt-2" onclick="openConfiguracionModal()">Crear configuración alarma</button>
+                    <button type="button" class="btn btn-primary mt-2" onclick="openConfiguracionModal()">Crear
+                        configuración alarma</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="configuracionModal" tabindex="-1" aria-labelledby="configuracionModalLabel" aria-hidden="true">
+    <div class="modal fade" id="configuracionModal" tabindex="-1" aria-labelledby="configuracionModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
@@ -47,14 +49,17 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" onclick="guardarConfiguracionAlarmas()">Guardar</button>
+                    <button type="button" class="btn btn-primary"
+                        onclick="guardarConfiguracionAlarmas()">Guardar</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        let CAsensorTypes = [];
+        if (typeof CAsensorTypes === 'undefined') {
+            let CAsensorTypes = [];
+        }
 
         $(document).ready(function () {
             makeRequest();
@@ -91,9 +96,9 @@
         function putItemsList(items) {
             let content = '';
             items.forEach(item => {
-                let CAmeasureTypeOptsContent = ''; 
+                let CAmeasureTypeOptsContent = '';
 
-                CAsensorTypes.forEach(s => { 
+                CAsensorTypes.forEach(s => {
                     CAmeasureTypeOptsContent += `
                         <option value="${s}" ${item.measure_type === s ? 'selected' : ''} >${s}</option>
                     `;
@@ -283,20 +288,20 @@
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error en la solicitud: ' + response.statusText);
-                }
-            })
-            .then(data => {
-                alert("Configuración de alarma creada.");
-                makeRequest();
-                const myModal = bootstrap.Modal.getInstance(document.getElementById('configuracionModal'));
-                myModal.hide();
-            })
-            .catch(error => {
-                console.error("Error al recuperar los datos del backend:", error);
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud: ' + response.statusText);
+                    }
+                })
+                .then(data => {
+                    alert("Configuración de alarma creada.");
+                    makeRequest();
+                    const myModal = bootstrap.Modal.getInstance(document.getElementById('configuracionModal'));
+                    myModal.hide();
+                })
+                .catch(error => {
+                    console.error("Error al recuperar los datos del backend:", error);
+                });
         }
     </script>
 </body>

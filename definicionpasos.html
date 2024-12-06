@@ -68,8 +68,10 @@
     </div>
 
     <script>
-        let SDsensorTypes = [];
-
+        if (typeof SDsensorTypes === 'undefined') {
+            let SDsensorTypes = [];
+        }
+        
         $(document).ready(function () {
             makeRequest();
         });

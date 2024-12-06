@@ -56,9 +56,21 @@
     </div>
 
     <script>
-        let SsensorTypeOptsContent = '';
-        let SmeasureTypeOptsContent = '';
-        let SunitsOptsContent = '';
+        if (typeof SsensorTypeOptsContent === 'undefined') {
+            let SsensorTypeOptsContent = '';
+        }
+        
+        if (typeof SmeasureTypeOptsContent === 'undefined') {
+            let SmeasureTypeOptsContent = '';
+        }
+
+        if (typeof SunitsOptsContent === 'undefined') {
+            let SunitsOptsContent = '';
+        }
+
+        if (typeof measurementSpecsList === 'undefined') {
+            let measurementSpecsList = [];
+        }
 
         $(document).ready(function () {
             makeRequest();
@@ -180,8 +192,6 @@
                 console.error("Error al eliminar:", error);
             });
         }
-
-        let measurementSpecsList = [];
 
         function crearSensor() {    
             const content = `
