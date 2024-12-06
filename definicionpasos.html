@@ -24,11 +24,14 @@
                 <div class="row pb-2">
                     <!-- botonera -->
                     <div class="btn-group" role="group" aria-label="Refrescar/Comenzar/Detener">
-                        <button type="button" class="btn btn-primary" onclick="startMeasurementLoop()">
+                        <button type="button" class="btn btn-success" onclick="handleMeasurementButtonLoop('start')">
                             <i class="bi bi-play"></i> Comenzar
                         </button>
-                        <button type="button" class="btn btn-secondary" onclick="stopMeasurementLoop()">
-                            <i class="bi bi-pause"></i> Detener
+                        <button type="button" class="btn btn-secondary" onclick="handleMeasurementButtonLoop('pause')">
+                            <i class="bi bi-pause"></i> Pausar
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="handleMeasurementButtonLoop('stop')">
+                            <i class="bi bi-sign-stop"></i> Detener
                         </button>
                     </div>
 
@@ -300,27 +303,13 @@
                 });
         }
 
-        function startMeasurementLoop() {
+        function handleMeasurementButtonLoop(suffix) {
             $.ajax({
-                url: "http://localhost:8000/worker/start",
+                url: `http://localhost:8000/worker/${suffix}`,
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
-                    alert('Acción completada');
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error al recuperar los datos del backend:", error);
-                }
-            });
-        }
-
-        function stopMeasurementLoop() {
-            $.ajax({
-                url: "http://localhost:8000/worker/stop",
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    alert('Acción completada');
+                    alert(data.status);
                 },
                 error: function (xhr, status, error) {
                     console.error("Error al recuperar los datos del backend:", error);
