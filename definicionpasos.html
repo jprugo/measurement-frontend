@@ -42,14 +42,16 @@
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary" onclick="crearDefinicionPasos()">Crear definición de pasos</button>
+                    <button type="button" class="btn btn-primary" onclick="crearDefinicionPasos()">Crear definición de
+                        pasos</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="definicionModal" tabindex="-1" aria-labelledby="definicionModalLabel" aria-hidden="true">
+    <div class="modal fade" id="definicionModal" tabindex="-1" aria-labelledby="definicionModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -68,40 +70,33 @@
     </div>
 
     <script>
-        let SDsensorTypes = [];
+        var SDsensorTypes = [];
 
         $(document).ready(function () {
-            makeRequest();
+            displayStepDefinitions();
         });
 
-        function makeRequest() {
-            $.ajax({
-                url: "http://localhost:8000/worker/stepDefinition",
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    const result = data.result;
-                    putItemsList(result);
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error al recuperar los datos del backend:", error);
+        async function getStepDefinition() {
+            const response = await fetch("http://localhost:8000/worker/stepDefinition", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
                 }
             });
 
-            $.ajax({
-                url: "http://localhost:8000/measurement/sensorTypes",
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    SDsensorTypes = data.result;
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error al recuperar los tipos de medidas:", error);
-                }
-            });
+            if (!response.ok) {
+                throw new Error("Error al recuperar los datos del backend: " + response.statusText);
+            }
+
+            const data = await response.json();
+
+            return data.result;
         }
 
-        function putItemsList(items) {
+        async function displayStepDefinitions() {
+
+            items = await getStepDefinition();
+            var SDsensorTypes = await getSensorTypes();
             let content = '';
             items.forEach(item => {
                 let SDsensorTypeOptsContent = '';
@@ -113,7 +108,8 @@
                     <input type="hidden" class="form-control" id="id" name="id" value="${item.id}" placeholder="0">
 
                     <!-- Formulario -->
-                    <div class="row mb-3 text-secondary" id="step-${item.id}">
+                    <div id="step-${item.id}">
+                        <div class="row mb-3 text-secondary" >
                         <div class="col-sm-3">
                             <label class="form-label" for="${item.id}position">Posición</label>
                             <select class="form-select" name="${item.id}position" id="${item.id}position">
@@ -155,7 +151,8 @@
                             </div>
                         </div>
                     </div>
-
+                    </div>
+                    
                     <hr>
                 `;
             });
@@ -174,7 +171,7 @@
                         throw new Error('Error en la solicitud: ' + response.statusText);
                     }
                     alert("Elemento de configuración de pasos eliminado.");
-                    
+
                     const stepElement = document.getElementById(`step-${stepId}`);
                     stepElement.remove();
 
@@ -217,11 +214,9 @@
                 });
         }
 
-        function crearDefinicionPasos() {
-            let SDsensorTypeOptsContent = '';
-            SDsensorTypes.forEach(sensor => {
-                SDsensorTypeOptsContent += `<option value="${sensor}">${sensor}</option>`;
-            });
+        async function crearDefinicionPasos() {
+
+            var SDsensorTypeOptsContent = await getOptsSensorTypes();
 
             const content = `
                 <input type="hidden" class="form-control" id="newId" name="newId" value="0">
@@ -265,7 +260,6 @@
 
             document.getElementById('modal-body-content').innerHTML = content;
 
-            // Muestra el modal
             const myModal = new bootstrap.Modal(document.getElementById('definicionModal'));
             myModal.show();
         }
@@ -294,7 +288,7 @@
                         throw new Error('Error en la solicitud: ' + response.statusText);
                     }
                     alert("Elemento de definición de paso creado.");
-                    makeRequest();
+                    displayStepDefinitions();
                     const myModal = bootstrap.Modal.getInstance(document.getElementById('definicionModal'));
                     myModal.hide();
                 })
@@ -315,6 +309,32 @@
                     console.error("Error al recuperar los datos del backend:", error);
                 }
             });
+        }
+
+        // Sensor types
+        async function getSensorTypes() {
+            const response = await fetch("http://localhost:8000/measurement/sensorTypes", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            if (!response.ok) {
+                throw new Error("Error al recuperar los tipos de sensores: " + response.statusText);
+            }
+            const data = await response.json();
+            return data.result;
+        }
+
+        async function getOptsSensorTypes() {
+            const sensorTypes = await getSensorTypes();
+            let SsensorTypeOptsContent = '';
+            if (sensorTypes && sensorTypes.length > 0) {
+                sensorTypes.forEach(s => {
+                    SsensorTypeOptsContent += `<option value="${s}">${s}</option>`;
+                });
+            }
+            return SsensorTypeOptsContent;
         }
     </script>
 </body>

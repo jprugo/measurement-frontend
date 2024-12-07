@@ -56,49 +56,29 @@
     </div>
 
     <script>
-        let SsensorTypeOptsContent = '';
-        let SmeasureTypeOptsContent = '';
-        let SunitsOptsContent = '';
+        var measurementSpecsList = [];
 
         $(document).ready(function () {
-            makeRequest();
+            displaySensors();
         });
 
-        function makeRequest() {
-            $.ajax({
-                url: "http://localhost:8000/measurement/sensor/all",
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    const result = data.result;
-                    putItemsList(result);
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error al recuperar los sensores configurados:", error);
+        async function getSensors() {
+            const response = await fetch("http://localhost:8000/measurement/sensor/all", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
                 }
             });
-
-            $.ajax({
-                url: "http://localhost:8000/measurement/sensorTypes",
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    console.log(data);
-                    const result = data.result;
-                    result.forEach(s => { 
-                        SsensorTypeOptsContent += `
-                            <option value="${s}">${s}</option>
-                        `;
-                    });
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error al recuperar los tipos de sensores:", error);
-                }
-            });
+            if (!response.ok) {
+                throw new Error("Error al recuperar los tipos de sensores: " + response.statusText);
+            }
+            const data = await response.json();
+            return data.result;
         }
 
-        function putItemsList(items) {
+        async function displaySensors() {
             let content = '';
+            var items = await getSensors();
             items.forEach(item => {
                 let content2 = '';
                 item.measurement_spec.forEach(ms => {
@@ -168,22 +148,21 @@
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error en la solicitud: ' + response.statusText);
-                }
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud: ' + response.statusText);
+                    }
 
-                document.getElementById(`sensor-${id}`).remove();
-                alert("Sensor eliminado.");
-            })
-            .catch(error => {
-                console.error("Error al eliminar:", error);
-            });
+                    document.getElementById(`sensor-${id}`).remove();
+                    alert("Sensor eliminado.");
+                })
+                .catch(error => {
+                    console.error("Error al eliminar:", error);
+                });
         }
 
-        let measurementSpecsList = [];
-
-        function crearSensor() {    
+        async function crearSensor() {
+            const SsensorTypeOptsContent = await getOptsSensorTypes();  // Esperar a que los tipos de sensor se carguen
             const content = `
                 <input type="hidden" class="form-control" id="newId" name="newId" value="0">
 
@@ -218,9 +197,10 @@
             document.getElementById('modal-body-content').innerHTML = content;
 
             const myModal = new bootstrap.Modal(document.getElementById('definicionModal'));
-
             myModal.show();
         }
+
+
         function agregarMeasurementSpec() {
             const newSpecId = measurementSpecsList.length;
 
@@ -235,14 +215,12 @@
                         <label class="form-label">Tipo de Medida</label>
                         <select class="form-select" id="specType_${newSpecId}" onchange="handleMeasureTypeChange(this, ${newSpecId})">
                             <option>Seleccione</option>
-                            ${SmeasureTypeOptsContent}
                         </select>
                     </div>
                     <div class="col-sm-5">
                         <label class="form-label">Unidad</label>
                         <select class="form-select" id="specUnit_${newSpecId}" onchange="handleUnitChange(this, ${newSpecId})">
                             <option>Seleccione</option>
-                            ${SunitsOptsContent}
                         </select>
                     </div>
                     <div class="col-sm-2" style="display: flex; flex-direction: column; justify-content: flex-end;">
@@ -254,70 +232,7 @@
             document.getElementById('measurement-specs-container').insertAdjacentHTML('beforeend', newMeasurementSpec);
         }
 
-        function handleSensorTypeChange() {
-            const selectedSensorType = document.getElementById('newSensorType').value;
-            console.log(`Cambio sensor type ${selectedSensorType}`);
-
-            SmeasureTypeOptsContent = ''; 
-
-            $.ajax({
-                url: `http://localhost:8000/measurement/measureTypesBySensor?sensor_type=${selectedSensorType}`,
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    console.log(data);
-                    const result = data.result;
-                    result.forEach(m => { 
-                        SmeasureTypeOptsContent += `
-                            <option value="${m}">${m}</option>
-                        `;
-                    });
-
-                    updateMeasurementSpecSelectors();
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error al recuperar los tipos de medidas del sensor : ", error);
-                }
-            });
-        }
-
-        function handleMeasureTypeChange(element, id) {
-            const selectedMeasureType = element.value;
-            console.log(`Cambio measure type ${id}: ${selectedMeasureType}`);
-
-            measurementSpecsList[id].measure_type = selectedMeasureType;
-
-            SunitsOptsContent = '';
-
-            $.ajax({
-                url: `http://localhost:8000/measurement/units?measure_type=${selectedMeasureType}`,
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    console.log(data);
-                    const result = data.result;
-
-                    result.forEach(m => { 
-                        SunitsOptsContent += `
-                            <option value="${m.value}">${m.value}</option>
-                        `;
-                    });
-
-                    updateUnitSelector(id);
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error al recuperar las unidades del sensor : ", error);
-                }
-            });
-        }
-
-        function handleUnitChange(element, id) {
-            const selectedMeasureType = element.value;
-        
-            measurementSpecsList[id].unit = selectedMeasureType;
-        }
-
-        function updateMeasurementSpecSelectors() {
+        function updateMeasurementTypeSpecSelector(SmeasureTypeOptsContent) {
             measurementSpecsList.forEach((spec, index) => {
                 const specTypeSelect = document.getElementById(`specType_${index}`);
                 if (specTypeSelect) {
@@ -326,7 +241,44 @@
             });
         }
 
-        function updateUnitSelector(id) {
+        async function handleSensorTypeChange() {
+            const selectedSensorType = document.getElementById('newSensorType').value;
+            console.log(`Cambio sensor type ${selectedSensorType}`);
+
+            var SmeasureTypeOptsContent = '<option>Seleccione</option>';
+            result = await getMeasureTypes(selectedSensorType);
+
+            result.forEach(m => {
+                SmeasureTypeOptsContent += `
+                        <option value="${m}">${m}</option>
+                    `;
+            });
+            updateMeasurementTypeSpecSelector(SmeasureTypeOptsContent);
+        }
+
+        async function handleMeasureTypeChange(element, id) {
+            const selectedMeasureType = element.value;
+            console.log(`Cambio measure type ${id}: ${selectedMeasureType}`);
+
+            measurementSpecsList[id].measure_type = selectedMeasureType;
+
+            SunitsOptsContent = '<option>Seleccione</option>';
+            result = await getUnits(selectedMeasureType);
+            result.forEach(m => {
+                SunitsOptsContent += `
+                    <option value="${m.value}">${m.value}</option>
+                `;
+            });
+
+            updateUnitSelector(id, SunitsOptsContent);
+        }
+
+        function handleUnitChange(element, id) {
+            const selectedMeasureType = element.value;
+            measurementSpecsList[id].unit = selectedMeasureType;
+        }
+
+        function updateUnitSelector(id, SunitsOptsContent) {
             const unitSelect = document.getElementById(`specUnit_${id}`);
             if (unitSelect) {
                 unitSelect.innerHTML = SunitsOptsContent;
@@ -346,7 +298,7 @@
                 sensor_type: document.getElementById('newSensorType').value,
             });
 
-            console.log(measurementSpecsList)
+            console.log('Guardando lista: ' + JSON.stringify(measurementSpecsList))
 
             fetch(`http://localhost:8000/measurement/sensor?${params}`, {
                 method: 'POST',
@@ -355,21 +307,82 @@
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error en la solicitud: ' + response.statusText);
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud: ' + response.statusText);
+                    }
+                    const myModal = bootstrap.Modal.getInstance(document.getElementById('definicionModal'));
+                    myModal.hide();
+                    displaySensors();
+                })
+                .catch(error => {
+                    console.error("Error al guardar sensor:", error);
                 }
-                const myModal = bootstrap.Modal.getInstance(document.getElementById('definicionModal'));
-                myModal.hide();
-                makeRequest();
-            })
-            .catch(error => {
-                console.error("Error al guardar sensor:", error);
+                )
+
+        }
+
+        // Units
+        async function getUnits(selectedMeasureType) {
+            const response = await fetch(`http://localhost:8000/measurement/units?measure_type=${selectedMeasureType}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Error al recuperar las unidades del sensor: " + response.statusText);
             }
-            )
-            
+
+            const data = await response.json();
+
+            return data.result;
         }
         
+        // Measure Types
+        async function getMeasureTypes(selectedSensorType) {
+            const response = await fetch(`http://localhost:8000/measurement/measureTypesBySensor?sensor_type=${selectedSensorType}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Error al recuperar los tipos de medidas del sensor: " + response.statusText);
+            }
+            const data = await response.json();
+            console.log(data.result);
+            return data.result;
+        }
+
+        // Sensor Types
+        async function getSensorTypes() {
+            const response = await fetch("http://localhost:8000/measurement/sensorTypes", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            if (!response.ok) {
+                throw new Error("Error al recuperar los tipos de sensores: " + response.statusText);
+            }
+            const data = await response.json();
+            return data.result;
+        }
+
+        async function getOptsSensorTypes() {
+            const sensorTypes = await getSensorTypes();
+            var SsensorTypeOptsContent = '';
+            if (sensorTypes && sensorTypes.length > 0) {
+                sensorTypes.forEach(s => {
+                    SsensorTypeOptsContent += `<option value="${s}">${s}</option>`;
+                });
+            }
+            return SsensorTypeOptsContent;
+        }
+
     </script>
 </body>
 

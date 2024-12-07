@@ -28,14 +28,16 @@
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary mt-2" onclick="openConfiguracionModal()">Crear configuración alarma</button>
+                    <button type="button" class="btn btn-primary mt-2" onclick="openConfiguracionModal()">Crear
+                        configuración alarma</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="configuracionModal" tabindex="-1" aria-labelledby="configuracionModalLabel" aria-hidden="true">
+    <div class="modal fade" id="configuracionModal" tabindex="-1" aria-labelledby="configuracionModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
@@ -47,53 +49,44 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" onclick="guardarConfiguracionAlarmas()">Guardar</button>
+                    <button type="button" class="btn btn-primary"
+                        onclick="guardarConfiguracionAlarmas()">Guardar</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        let CAsensorTypes = [];
+        var CAsensorTypes = [];
 
         $(document).ready(function () {
-            makeRequest();
+            displayAlarmConfiguration();
         });
 
-        function makeRequest() {
-            $.ajax({
-                url: "http://localhost:8000/alarmDefinition",
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    let items = data.result;
-                    putItemsList(items);
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error al recuperar los datos del backend:", error);
+        async function getAlarmDefinitions() {
+            const response = await fetch("http://localhost:8000/alarmDefinition", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
                 }
             });
 
-            // Cargar los tipos de medidas para el modal
-            $.ajax({
-                url: "http://localhost:8000/measurement/measureTypes",
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    CAsensorTypes = data.result;
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error al recuperar los tipos de medidas:", error);
-                }
-            });
+            if (!response.ok) {
+                throw new Error("Error al recuperar los datos del backend: " + response.statusText);
+            }
+
+            const data = await response.json();
+
+            return data.result;
         }
 
-        function putItemsList(items) {
+        async function displayAlarmConfiguration() {
+            items = await getAlarmDefinitions();
+            var CAsensorTypes = await getMeasureTypes();
             let content = '';
             items.forEach(item => {
-                let CAmeasureTypeOptsContent = ''; 
-
-                CAsensorTypes.forEach(s => { 
+                var CAmeasureTypeOptsContent = '';
+                CAsensorTypes.forEach(s => {
                     CAmeasureTypeOptsContent += `
                         <option value="${s}" ${item.measure_type === s ? 'selected' : ''} >${s}</option>
                     `;
@@ -185,7 +178,7 @@
                 })
                 .then(data => {
                     alert("Elemento de configuración de alarma actualizado.");
-                    makeRequest();
+                    getAlarmDefinitions();
                 })
                 .catch(error => {
                     console.error("Error al actualizar:", error);
@@ -208,20 +201,15 @@
                 })
                 .then(data => {
                     alert("Elemento de configuración de alarma eliminado.");
-                    makeRequest();
+                    displayAlarmConfiguration();
                 })
                 .catch(error => {
                     console.error("Error al eliminar:", error);
                 });
         }
 
-        function openConfiguracionModal() {
-            let measureTypeOptsContent = '';
-            if (CAsensorTypes) {
-                CAsensorTypes.forEach(sensor => {
-                    measureTypeOptsContent += `<option value="${sensor}">${sensor}</option>`;
-                });
-            }
+        async function openConfiguracionModal() {
+            var measureTypeOptsContent = await getOptsMeasureTypes();
 
             const content = `
                 <div class="row mb-3 text-secondary">
@@ -264,6 +252,7 @@
         }
 
         function guardarConfiguracionAlarmas() {
+
             const measureType = document.getElementById('newMeasureType').value;
             const configValue = document.getElementById('newConfigValue').value;
             const alarmType = document.getElementById('newAlarmType').value;
@@ -283,20 +272,46 @@
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error en la solicitud: ' + response.statusText);
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud: ' + response.statusText);
+                    }
+                })
+                .then(data => {
+                    alert("Configuración de alarma creada.");
+                    displayAlarmConfiguration();
+                    const myModal = bootstrap.Modal.getInstance(document.getElementById('configuracionModal'));
+                    myModal.hide();
+                })
+                .catch(error => {
+                    console.error("Error al recuperar los datos del backend:", error);
+                });
+        }
+
+        // Measure types
+        async function getMeasureTypes() {
+            const response = await fetch("http://localhost:8000/measurement/measureTypes", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
                 }
-            })
-            .then(data => {
-                alert("Configuración de alarma creada.");
-                makeRequest();
-                const myModal = bootstrap.Modal.getInstance(document.getElementById('configuracionModal'));
-                myModal.hide();
-            })
-            .catch(error => {
-                console.error("Error al recuperar los datos del backend:", error);
             });
+            if (!response.ok) {
+                throw new Error("Error al recuperar los tipos de sensores: " + response.statusText);
+            }
+            const data = await response.json();
+            return data.result;
+        }
+
+        async function getOptsMeasureTypes() {
+            const measureTypes = await getMeasureTypes();
+            let SsensorTypeOptsContent = '';
+            if (measureTypes && measureTypes.length > 0) {
+                measureTypes.forEach(s => {
+                    SsensorTypeOptsContent += `<option value="${s}">${s}</option>`;
+                });
+            }
+            return SsensorTypeOptsContent;
         }
     </script>
 </body>
