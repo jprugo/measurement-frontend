@@ -1,6 +1,25 @@
 function pintarTabla(tableBody, measureType) {
     fileName = `${measureType}-`;
-    $("#tabla .table tbody").html(tableBody);
+    $("#tabla").html(
+        `
+        <div class="row mb-2 text-muted">
+            <button class="btn btn-primary bi bi-cloud-download-fill" onclick="exportTableToCSV('${fileName}')">Descargar CSV</button>
+        </div>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr class="table-dark">
+                <th scope="col">#</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Valor</th>
+                <th scope="col">Tipo</th>
+                </tr>
+            </thead>
+        <tbody>
+            ${tableBody}
+        </tbody>
+        </table>
+        `
+    );
 }
 
 async function pintarGrafico(pointsObject, title, suffix) {
@@ -24,7 +43,7 @@ async function pintarGrafico(pointsObject, title, suffix) {
     }
 
     var options = {
-        width: _widthGraph, 
+        width: _widthGraph,
         height: _heightGraph,
         theme: "light2",
         exportEnabled: true,
@@ -53,13 +72,23 @@ async function pintarGrafico(pointsObject, title, suffix) {
         data: data
     };
 
-    $("#graph").CanvasJSChart(options);
+    if (typeof $.fn.CanvasJSChart !== "undefined") {
+        $("#graph").CanvasJSChart(options);
+    } else {
+        console.log("CanvasJS no está cargado");
+    }
 }
 
+
 function agregarDatosAlGrafico(newDataPoints) {
-    var grafico = $("#graph").CanvasJSChart();
-    grafico.options.data[0].dataPoints = grafico.options.data[0].dataPoints.concat(newDataPoints);
-    grafico.render();
+    if (typeof $.fn.CanvasJSChart !== "undefined") {
+        $("#graph").CanvasJSChart(options);
+        grafico.options.data[0].dataPoints = grafico.options.data[0].dataPoints.concat(newDataPoints);
+        grafico.render();
+    } else {
+        console.error("CanvasJSChart no está disponible para añadir datapoints.");
+    }
+
 }
 
 // BACKEND
@@ -109,7 +138,6 @@ async function cargarDatos(data, title, suffix) {
             dataTypes[key].datapoints.push({ y: e.value, x: new Date(e.created_at) });
         });
 
-        console.log(dataTypes);
         pintarGrafico(dataTypes, title, suffix);
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
@@ -271,4 +299,42 @@ async function getUnitsForMeasureType(measureType) {
         console.error("Error al recuperar la unidad del sensor:", error);
         return null;
     }
+}
+
+
+function exportTableToCSV(filename) {
+    var csv = [];
+    var rows = document.querySelectorAll("table tr");
+
+    for (var i = 0; i < rows.length; i++) {
+        var row = [], cols = rows[i].querySelectorAll("td, th");
+
+        for (var j = 0; j < cols.length; j++)
+            row.push(cols[j].innerText);
+
+        csv.push(row.join(","));
+    }
+
+    downloadCSV(csv.join("\n"), filename);
+}
+
+function downloadCSV(csv, filename) {
+    var csvFile;
+    var downloadLink;
+
+    csvFile = new Blob([csv], { type: "text/csv" });
+
+    downloadLink = document.createElement("a");
+
+    downloadLink.download = filename + ".csv";
+
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+
+    downloadLink.style.display = "none";
+
+    document.body.appendChild(downloadLink);
+
+    downloadLink.click();
+
+    document.body.removeChild(downloadLink);
 }
