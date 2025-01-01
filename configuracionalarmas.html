@@ -84,68 +84,67 @@
             items = await getAlarmDefinitions();
             var CAsensorTypes = await getMeasureTypes();
             let content = '';
-            items.forEach(item => {
+
+            for (let item of items) {
                 var CAmeasureTypeOptsContent = '';
                 CAsensorTypes.forEach(s => {
                     CAmeasureTypeOptsContent += `
-                        <option value="${s}" ${item.measure_type === s ? 'selected' : ''} >${s}</option>
-                    `;
+                <option value="${s}" ${item.measure_type === s ? 'selected' : ''} >${s}</option>
+            `;
                 });
 
+                const unidad = await getUnitsConfiguredForMeasureType(item.measure_type);
+
                 content += `
-                    <input type="hidden" class="form-control" id="id" name="id" value="${item.id}" placeholder="0">
+            <input type="hidden" class="form-control" id="id" name="id" value="${item.id}" placeholder="0">
+            <div class="row mb-3 text-secondary">
+                <div class="col-sm-5 pb-2">
+                    <label class="form-label" for="${item.id}measure_type">Medidas</label>
+                    <select class="form-select" id="${item.id}measure_type" name="${item.id}measure_type">
+                        ${CAmeasureTypeOptsContent}
+                    </select>
+                </div>
 
-                    <!-- Visualizador -->
-                    <div class="row mb-3 text-secondary">
-                        <div class="col-sm-5 pb-2">
-                            <label class="form-label" for="${item.id}measure_type">Medidas</label>
-                            <select class="form-select" id="${item.id}measure_type" name="${item.id}measure_type">
-                                ${CAmeasureTypeOptsContent}
-                            </select>
-                        </div>
+                <div class="col-sm-3">
+                    <label class="form-label" for="${item.id}config_value">Valor <span class="small">(Unidad: ${unidad})</span></label>
+                    <input type="number" class="form-control" name="${item.id}config_value" id="${item.id}config_value" value="${item.config_value}">
+                </div>
 
-                        <div class="col-sm-3">
-                            <label class="form-label" for="${item.id}config_value">Valor <span class="small">(Unidad)</span></label>
-                            <input type="number" class="form-control" name="${item.id}config_value" id="${item.id}config_value" value="${item.config_value}">
-                        </div>
+                <div class="col-sm-4 pb-2">
+                    <label class="form-label" for="${item.id}alarm_type">Alarma</label>
+                    <select class="form-select" name="${item.id}alarm_type" id="${item.id}alarm_type">
+                        <option value="DESVEST" ${item.alarm_type === 'DESVEST' ? 'selected' : ''}>DESVEST</option>
+                        <option value="LOWER_THAN" ${item.alarm_type === 'LOWER_THAN' ? 'selected' : ''}>MENOR QUE</option>
+                        <option value="GREATER_THAN" ${item.alarm_type === 'GREATER_THAN' ? 'selected' : ''}>MAYOR QUE</option>
+                    </select>
+                </div>
 
-                        <div class="col-sm-4 pb-2">
-                            <label class="form-label" for="${item.id}alarm_type">Alarma</label>
-                            <select class="form-select" name="${item.id}alarm_type" id="${item.id}alarm_type">
-                                <option value="DESVEST" ${item.alarm_type === 'DESVEST' ? 'selected' : ''}>DESVEST</option>
-                                <option value="LOWER_THAN" ${item.alarm_type === 'LOWER_THAN' ? 'selected' : ''}>MENOR QUE</option>
-                                <option value="GREATER_THAN" ${item.alarm_type === 'GREATER_THAN' ? 'selected' : ''}>MAYOR QUE</option>
-                            </select>
-                        </div>
+                <div class="col-sm-5">
+                    <label class="form-label" for="${item.id}sound_path">Sonido</label>
+                    <input type="text" class="form-control" name="${item.id}sound_path" id="${item.id}sound_path" value="${item.sound_path}">
+                </div>
 
-                        <div class="col-sm-5">
-                            <label class="form-label" for="${item.id}sound_path">Sonido</label>
-                            <input type="text" class="form-control" name="${item.id}sound_path" id="${item.id}sound_path" value="${item.sound_path}">
-                        </div>
-
-                        <div class="col-sm-3 pb-2">
-                            <label class="form-label" for="${item.id}active">Habilitada</label>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="${item.id}enabled" ${item.enabled ? 'checked' : ''}>
-                            </div>
-                        </div>
+                <div class="col-sm-3 pb-2">
+                    <label class="form-label" for="${item.id}active">Habilitada</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="${item.id}enabled" ${item.enabled ? 'checked' : ''}>
                     </div>
-                    
-                    <!-- BOTONERA -->
-                    <div class="row pb-2">
-                        <div class="col-sm-12">
-                            <div class="d-flex justify-content-between">
-                                <button class="btn btn-primary flex-fill me-2" onclick="actualizarConfiguracionAlarmas(${item.id})"><i class="bi bi-save2-fill"></i> Guardar</button>
-                                <button class="btn btn-danger flex-fill" onclick="eliminarConfiguracionAlarmas(${item.id})"><i class="bi bi-trash2-fill"></i> Eliminar</button>
-                            </div>
-                        </div>
+                </div>
+            </div>
+
+            <div class="row pb-2">
+                <div class="col-sm-12">
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-primary flex-fill me-2" onclick="actualizarConfiguracionAlarmas(${item.id})"><i class="bi bi-save2-fill"></i> Guardar</button>
+                        <button class="btn btn-danger flex-fill" onclick="eliminarConfiguracionAlarmas(${item.id})"><i class="bi bi-trash2-fill"></i> Eliminar</button>
                     </div>
+                </div>
+            </div>
 
-                    <hr>
-                `;
-            });
+            <hr>
+        `;
+            }
 
-            // Insertar el contenido generado en el DOM
             document.getElementById('alarmconfig-list').innerHTML = content;
         }
 
@@ -212,43 +211,57 @@
             var measureTypeOptsContent = await getOptsMeasureTypes();
 
             const content = `
-                <div class="row mb-3 text-secondary">
-                    <div class="col-sm-5 offset-sm-1">
-                        <label class="form-label">Medida</label>
-                        <select class="form-select" id="newMeasureType" name="newMeasureType">
-                            <option>Seleccione</option>
-                            ${measureTypeOptsContent}
-                        </select>
-                    </div>
+        <div class="row mb-3 text-secondary">
+            <div class="col-sm-5 offset-sm-1">
+                <label class="form-label">Medida</label>
+                <select class="form-select" id="newMeasureType" name="newMeasureType">
+                    <option value="">Seleccione</option>
+                    ${measureTypeOptsContent}
+                </select>
+            </div>
 
-                    <div class="col-sm-5">
-                        <label class="form-label">Valor <span class="small">(Unidad)</span></label>
-                        <input type="number" class="form-control" id="newConfigValue" name="newConfigValue">
-                    </div>
-                </div>
+            <div class="col-sm-5">
+                <label class="form-label">Valor <span id="unidadLabel" class="small">(Unidad)</span></label>
+                <input type="number" class="form-control" id="newConfigValue" name="newConfigValue">
+            </div>
+        </div>
 
-                <div class="row mb-3 text-secondary">
-                    <div class="col-sm-5 offset-sm-1">
-                        <label class="form-label">Alarma</label>
-                        <select class="form-select" id="newAlarmType" name="newAlarmType">
-                            <option value="DESVEST">DESVEST</option>
-                            <option value="LOWER_THAN">MENOR QUE</option>
-                            <option value="GREATER_THAN">MAYOR QUE</option>
-                        </select>
-                    </div>
+        <div class="row mb-3 text-secondary">
+            <div class="col-sm-5 offset-sm-1">
+                <label class="form-label">Alarma</label>
+                <select class="form-select" id="newAlarmType" name="newAlarmType">
+                    <option value="DESVEST">DESVEST</option>
+                    <option value="LOWER_THAN">MENOR QUE</option>
+                    <option value="GREATER_THAN">MAYOR QUE</option>
+                </select>
+            </div>
 
-                    <div class="col-sm-5">
-                        <label class="form-label">Sonido</label>
-                        <input type="text" class="form-control" id="newSoundPath" name="newSoundPath" value="">
-                    </div>
-                </div>
-            `;
+            <div class="col-sm-5">
+                <label class="form-label">Sonido</label>
+                <input type="text" class="form-control" id="newSoundPath" name="newSoundPath" value="">
+            </div>
+        </div>
+    `;
 
-            // Mostrar el modal
+
             document.getElementById('modal-body-content').innerHTML = content;
 
             const myModal = new bootstrap.Modal(document.getElementById('configuracionModal'));
             myModal.show();
+
+
+            const measureTypeSelect = document.getElementById('newMeasureType');
+
+
+            measureTypeSelect.addEventListener('change', updateUnidadLabel);
+        }
+
+        async function updateUnidadLabel() {
+            const measureTypeSelect = document.getElementById('newMeasureType');
+            const unidadLabel = document.getElementById('unidadLabel');
+
+            const selectedMeasureType = measureTypeSelect.value;
+            unidadLabel.textContent = await getUnitsConfiguredForMeasureType(selectedMeasureType);
         }
 
         function guardarConfiguracionAlarmas() {
@@ -313,6 +326,23 @@
             }
             return SsensorTypeOptsContent;
         }
+
+        async function getUnitsConfiguredForMeasureType(measure_type) {
+            const response = await fetch('http://localhost:8000/measurement/unitsConfiguredByMeasureType?measure_type=' + measure_type, {
+                method: 'GET',
+                headers: {
+                    'accept': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Error al recuperar la unidad del tipo de medida: " + response.statusText);
+            }
+
+            const data = await response.json();
+            return data.result[0]?.value || '';
+        }
+
     </script>
 </body>
 
