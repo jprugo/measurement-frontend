@@ -14,7 +14,7 @@
     <script src="js/swiper.min.js"></script> <!-- Swiper for image and text sliders -->
     <script src="js/jquery/jquery.magnific-popup.js"></script> <!-- Magnific Popup for lightboxes -->
     <script src="js/jquery/jquery.easing.min.js"></script> <!-- jQuery Easing for smooth scrolling between anchors -->
-    <script src="js/jquery/jquery.canvasjs.min.js"></script>
+    <script src="js/jquery/jquery.canvasjs.min.js"></script> <!-- CanvasJS for charts -->
     <script src="js/validator.min.js"></script> <!-- Validator.js - Bootstrap plugin that validates forms -->
     <script src="js/gigascript.js"></script>
 </head>
@@ -33,16 +33,13 @@
     <div class="container-fluid">
         <div class="row flex-nowrap">
             <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark" id="menuPrincipal">
-                <div
-                    class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white-50 min-vh-100">
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white-50 min-vh-100">
                     <a class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white-50 text-decoration-none"
                         style="margin-top: 70px;">
                         <span class="fs-5 d-none d-sm-inline">Menu</span>
                     </a>
-                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start"
-                        id="menu">
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
                         <li>
-                            <!-- LISTA CON MEDICIONES DISPONIBLES -->
                             <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
                                 <i class="fs-4 bi-speedometer2"></i><span class="d-none d-sm-inline"> <span
                                         class="ms-1 d-none d-sm-inline">Mediciones</span></span>
@@ -55,52 +52,8 @@
                                         class="ms-1 d-none d-sm-inline">Configuraciones</span></span>
                             </a>
                             <ul class="collapse show nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
-                                <li class="w-100">
-                                    <button class="nav-link px-0 align-middle" id="configuracion"
-                                        onclick="manejarClicMenu('configuracion.html', '#contenido')">
-                                        <i class="fs-4 bi-wrench"></i>
-                                        <span class="ms-1 d-none d-sm-inline">Propiedades</span>
-                                    </button>
-                                </li>
-                                <li class="w-100">
-                                    <button class="nav-link px-0 align-middle" id="configuracionalarmas"
-                                        onclick="manejarClicMenu('configuracionalarmas.html', '#contenido')">
-                                        <i class="fs-4 bi-alarm"></i>
-                                        <span class="ms-1 d-none d-sm-inline">Alarmas</span>
-                                    </button>
-                                </li>
-                                <li class="w-100">
-                                    <button class="nav-link px-0 align-middle" id="definicionpasos"
-                                        onclick="manejarClicMenu('definicionpasos.html', '#contenido')">
-                                        <i class="fs-4 bi-list-ol"></i>
-                                        <span class="ms-1 d-none d-sm-inline">Pasos</span>
-                                    </button>
-                                </li>
-                                <li class="w-100">
-                                    <button class="nav-link px-0 align-middle" id="sensores"
-                                        onclick="manejarClicMenu('sensores.html', '#contenido')">
-                                        <i class="fs-4 bi-thermometer"></i>
-                                        <span class="ms-1 d-none d-sm-inline">Sensores</span>
-                                    </button>
-                                </li>
+                                <!-- Lista de botones de configuración aquí -->
                             </ul>
-
-                            <!-- ALARMAS -->
-                        <li class="w-100">
-                            <button class="nav-link px-0 align-middle" id="alarmas"
-                                onclick="manejarClicMenu('alarmas.html', '#contenido')">
-                                <i class="fs-4 bi-bell"></i>
-                                <span class="ms-1 d-none d-sm-inline">Alarmas</span>
-                            </button>
-                        </li>
-
-                        <li class="w-100">
-                            <button class="nav-link px-0 align-middle" id="ultimas"
-                                onclick="manejarClicMenu('ultimas.html', '#contenido')">
-                                <i class="fs-4 bi-flag"></i>
-                                <span class="ms-1 d-none d-sm-inline">Ultimas</span>
-                            </button>
-                        </li>
                         </li>
                     </ul>
                 </div>
@@ -140,9 +93,14 @@
         });
 
         function openAlarmModal(text) {
-            document.getElementById("modal-body-content").style.visibility = "visible";
+            // Eliminar cualquier modal existente si está abierto
+            const existingModal = document.getElementById('staticBackdrop');
+            if (existingModal) {
+                existingModal.remove();
+            }
 
-            const content = `
+            // Crear nuevo contenido para el modal
+            const modalContent = `
                 <div class="modal fade bg-danger" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -150,20 +108,30 @@
                                 <span class="text-danger fs-1">${text}</span>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="hideModal('modal-body-content')">Cerrar</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="hideModal()">Cerrar</button>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
-            document.getElementById('modal-body-content').innerHTML = content;
 
+            // Agregar el nuevo modal al DOM
+            document.body.insertAdjacentHTML('beforeend', modalContent);
+
+            // Inicializar y mostrar el modal
             const myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
             myModal.show();
+
+            // Event listener para limpiar el fondo cuando se cierra el modal
+            document.getElementById('staticBackdrop').addEventListener('hidden.bs.modal', function () {
+                document.body.classList.remove('modal-open');  // Eliminar la clase que pone el fondo oscuro
+                document.querySelector('.modal-backdrop').remove();  // Eliminar el backdrop oscuro
+            });
         }
 
-        function hideModal(vdivId) {
-            document.getElementById(vdivId).style.display = "none";
+        function hideModal() {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('staticBackdrop'));
+            modal.hide();
         }
 
         function escribirMensajeCadaSegundo() {
@@ -176,15 +144,15 @@
                         return response.text();
                     })
                     .then(data => {
-                        if (data){
-                            console.log('Descripción:', data);    
+                        if (data === 'null') {
+                            console.log('Descripción:', data);
                             openAlarmModal(data);
                         }
                     })
                     .catch(error => {
                         console.error('Hubo un problema con la solicitud:', error);
                     });
-            }, 10000);
+            }, 60000);
         }
     </script>
 </body>
