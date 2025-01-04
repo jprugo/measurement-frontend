@@ -97,7 +97,7 @@
                 });
 
                 content += `
-                    
+
                     <div id="sensor-${item.id}">
                         <input type="hidden" class="form-control" id="id" name="id" value="${item.id}" placeholder="0">
                         <!-- Formulario -->
@@ -162,46 +162,66 @@
         }
 
         async function crearSensor() {
-            const SsensorTypeOptsContent = await getOptsSensorTypes();  // Esperar a que los tipos de sensor se carguen
+            const SsensorTypeOptsContent = await getOptsSensorTypes();
+
             const content = `
-                <input type="hidden" class="form-control" id="newId" name="newId" value="0">
+        <input type="hidden" class="form-control" id="newId" name="newId" value="0">
 
-                <div class="row mb-3 text-secondary">
-                    <div class="col-sm-6">
-                        <span class="form-label">Marca</span>
-                        <input type="text" class="form-control" id="newBrand" name="newBrand" placeholder="0">
-                    </div>
-                    <div class="col-sm-6">
-                        <span class="form-label">Referencia</span>
-                        <input type="text" class="form-control" id="newReference" name="newReference" placeholder="0">
-                    </div>
-                </div>
+        <div class="row mb-3 text-secondary">
+            <div class="col-sm-6">
+                <span class="form-label">Marca</span>
+                <input type="text" class="form-control" id="newBrand" name="newBrand" placeholder="0">
+            </div>
+            <div class="col-sm-6">
+                <span class="form-label">Referencia</span>
+                <input type="text" class="form-control" id="newReference" name="newReference" placeholder="0">
+            </div>
+        </div>
 
-                <div class="row mb-3 text-secondary">
-                    <div class="col-sm-12">
-                        <span class="col-sm-3 col-form-label">Tipo sensor</span>
-                        <select class="form-select" id="newSensorType" name="newSensorType" onchange="handleSensorTypeChange()">
-                            <option>Seleccione</option>
-                            ${SsensorTypeOptsContent}
-                        </select>
-                    </div>
-                </div>
+        <div class="row mb-3 text-secondary">
+            <div class="col-sm-12">
+                <span class="col-sm-3 col-form-label">Tipo sensor</span>
+                <select class="form-select" id="newSensorType" name="newSensorType">
+                    <option>Seleccione</option>
+                    ${SsensorTypeOptsContent}
+                </select>
+            </div>
+        </div>
 
-                <!-- Measurement Spec -->
-                <div id="measurement-specs-container">    
-                </div>
+        <!-- Measurement Spec -->
+        <div id="measurement-specs-container"></div>
 
-                <button type="button" class="btn btn-success" onclick="agregarMeasurementSpec()">Agregar Medición</button>
-            `;
+        <button type="button" class="btn btn-success" onclick="agregarMeasurementSpec()">Agregar Medición</button>
+    `;
 
             document.getElementById('modal-body-content').innerHTML = content;
+
+            const sensorTypeSelect = document.getElementById('newSensorType');
+            if (sensorTypeSelect) {
+                sensorTypeSelect.addEventListener('change', handleSensorTypeChange);
+            }
 
             const myModal = new bootstrap.Modal(document.getElementById('definicionModal'));
             myModal.show();
         }
 
+        async function handleSensorTypeChange() {
+            const selectedSensorType = document.getElementById('newSensorType').value;
+            console.log(`Cambio sensor type ${selectedSensorType}`);
 
-        function agregarMeasurementSpec() {
+            var SmeasureTypeOptsContent = '<option>Seleccione</option>';
+            result = await getMeasureTypes(selectedSensorType);
+
+            result.forEach(m => {
+                SmeasureTypeOptsContent += `
+                        <option value="${m}">${m}</option>
+                    `;
+            });
+            updateMeasurementTypeSpecSelector(SmeasureTypeOptsContent);
+            cleanUnitSpecSelector(SmeasureTypeOptsContent);
+        }
+
+        async function agregarMeasurementSpec() {
             const newSpecId = measurementSpecsList.length;
 
             measurementSpecsList.push({
@@ -209,12 +229,21 @@
                 unit: ''
             });
 
+            const selectedSensorType = document.getElementById('newSensorType').value;
+            result = await getMeasureTypes(selectedSensorType);
+            var SmeasureTypeOptsContent = '<option>Seleccione</option>';
+            result.forEach(m => {
+                SmeasureTypeOptsContent += `
+                        <option value="${m}">${m}</option>
+                    `;
+            });
+
             const newMeasurementSpec = `
                 <div class="row mb-3" id="specRow_${newSpecId}">
                     <div class="col-sm-5">
                         <label class="form-label">Tipo de Medida</label>
                         <select class="form-select" id="specType_${newSpecId}" onchange="handleMeasureTypeChange(this, ${newSpecId})">
-                            <option>Seleccione</option>
+                            ${SmeasureTypeOptsContent}
                         </select>
                     </div>
                     <div class="col-sm-5">
@@ -234,6 +263,7 @@
 
         function updateMeasurementTypeSpecSelector(SmeasureTypeOptsContent) {
             measurementSpecsList.forEach((spec, index) => {
+                console.log('Iterating over measurement spec list' + spec);
                 const specTypeSelect = document.getElementById(`specType_${index}`);
                 if (specTypeSelect) {
                     specTypeSelect.innerHTML = SmeasureTypeOptsContent;
@@ -241,19 +271,13 @@
             });
         }
 
-        async function handleSensorTypeChange() {
-            const selectedSensorType = document.getElementById('newSensorType').value;
-            console.log(`Cambio sensor type ${selectedSensorType}`);
-
-            var SmeasureTypeOptsContent = '<option>Seleccione</option>';
-            result = await getMeasureTypes(selectedSensorType);
-
-            result.forEach(m => {
-                SmeasureTypeOptsContent += `
-                        <option value="${m}">${m}</option>
-                    `;
+        function cleanUnitSpecSelector(SmeasureTypeOptsContent) {
+            measurementSpecsList.forEach((spec, index) => {
+                const specUnitSelect = document.getElementById(`specUnit_${index}`);
+                if (specUnitSelect) {
+                    specUnitSelect.innerHTML = '<option>Seleccione</option>';
+                }
             });
-            updateMeasurementTypeSpecSelector(SmeasureTypeOptsContent);
         }
 
         async function handleMeasureTypeChange(element, id) {
@@ -286,8 +310,12 @@
         }
 
         function eliminarMeasurementSpec(id) {
-            measurementSpecsList.splice(id, 1);
-            document.getElementById(`specRow_${id}`).remove();
+            if (id === 0 && measurementSpecsList.length == 1) {
+                alert('Debe contar con al menos una especificacion');
+            } else {
+                measurementSpecsList.splice(id, 1);
+                document.getElementById(`specRow_${id}`).remove();
+            }
         }
 
         function guardarSensor() {
@@ -339,7 +367,7 @@
 
             return data.result;
         }
-        
+
         // Measure Types
         async function getMeasureTypes(selectedSensorType) {
             const response = await fetch(`http://localhost:8000/measurement/measureTypesBySensor?sensor_type=${selectedSensorType}`, {
@@ -353,7 +381,6 @@
                 throw new Error("Error al recuperar los tipos de medidas del sensor: " + response.statusText);
             }
             const data = await response.json();
-            console.log(data.result);
             return data.result;
         }
 

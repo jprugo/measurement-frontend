@@ -215,54 +215,62 @@
         }
 
         async function crearDefinicionPasos() {
+            // Cerrar el modal si ya está abierto antes de mostrarlo de nuevo
+            const existingModal = bootstrap.Modal.getInstance(document.getElementById('definicionModal'));
+            if (existingModal) {
+                existingModal.hide();
+            }
 
+            // Obtener opciones de sensores
             var SDsensorTypeOptsContent = await getOptsSensorTypes();
 
+            // Crear el contenido del modal con las opciones
             const content = `
-                <input type="hidden" class="form-control" id="newId" name="newId" value="0">
+        <input type="hidden" class="form-control" id="newId" name="newId" value="0">
 
-                <div class="row mb-3 text-secondary">
-                    <div class="col-sm-3">
-                        <span class="col-sm-3 col-form-label">Orden medida</span>
-                        <select class="form-select" id="newPosition" name="newPosition">
-                            <option value="FIRST">PRIMERO</option>
-                            <option value="SECOND">SEGUNDO</option>
-                            <option value="THIRD">TERCERO</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-3">
-                        <span class="col-sm-3 col-form-label">Duración (min)</span>
-                        <input type="number" class="form-control" id="newDuration" name="newDuration" placeholder="0">
-                    </div>
-                </div>
+        <div class="row mb-3 text-secondary">
+            <div class="col-sm-3">
+                <span class="col-sm-3 col-form-label">Orden medida</span>
+                <select class="form-select" id="newPosition" name="newPosition">
+                    <option value="FIRST">PRIMERO</option>
+                    <option value="SECOND">SEGUNDO</option>
+                    <option value="THIRD">TERCERO</option>
+                </select>
+            </div>
+            <div class="col-sm-3">
+                <span class="col-sm-3 col-form-label">Duración (min)</span>
+                <input type="number" class="form-control" id="newDuration" name="newDuration" placeholder="0">
+            </div>
+        </div>
 
-                <div class="row mb-3 text-secondary">
-                    <div class="col-sm-3">
-                        <span class="col-sm-3 col-form-label">Periodo (seg)</span>
-                        <input type="number" class="form-control" id="newPeriod" name="newPeriod" placeholder="0">
-                    </div>
-                    <div class="col-sm-3">
-                        <span class="col-sm-3 col-form-label">Espera (min)</span>
-                        <input type="number" class="form-control" id="newLead" name="newLead" placeholder="0">
-                    </div>
-                </div>
+        <div class="row mb-3 text-secondary">
+            <div class="col-sm-3">
+                <span class="col-sm-3 col-form-label">Periodo (seg)</span>
+                <input type="number" class="form-control" id="newPeriod" name="newPeriod" placeholder="0">
+            </div>
+            <div class="col-sm-3">
+                <span class="col-sm-3 col-form-label">Espera (min)</span>
+                <input type="number" class="form-control" id="newLead" name="newLead" placeholder="0">
+            </div>
+        </div>
 
-                <div class="row mb-3 text-secondary">
-                    <div class="col-sm-3">
-                        <span class="col-sm-3 col-form-label">Tipo sensor</span>
-                        <select class="form-select" id="newSensorType" name="newSensorType">
-                            <option>Seleccione</option>
-                            ${SDsensorTypeOptsContent}
-                        </select>
-                    </div>
-                </div>
-            `;
+        <div class="row mb-3 text-secondary">
+            <div class="col-sm-3">
+                <span class="col-sm-3 col-form-label">Tipo sensor</span>
+                <select class="form-select" id="newSensorType" name="newSensorType">
+                    <option>Seleccione</option>
+                    ${SDsensorTypeOptsContent}
+                </select>
+            </div>
+        </div>
+    `;
 
             document.getElementById('modal-body-content').innerHTML = content;
 
             const myModal = new bootstrap.Modal(document.getElementById('definicionModal'));
             myModal.show();
         }
+
 
         function guardarDefinicionPasos() {
             const position = document.getElementById('newPosition').value;
