@@ -224,42 +224,43 @@
         async function agregarMeasurementSpec() {
             const newSpecId = measurementSpecsList.length;
 
+
             measurementSpecsList.push({
                 measure_type: '',
                 unit: ''
             });
 
             const selectedSensorType = document.getElementById('newSensorType').value;
-            result = await getMeasureTypes(selectedSensorType);
-            var SmeasureTypeOptsContent = '<option>Seleccione</option>';
+            const result = await getMeasureTypes(selectedSensorType);
+            let SmeasureTypeOptsContent = '<option>Seleccione</option>';
             result.forEach(m => {
-                SmeasureTypeOptsContent += `
-                        <option value="${m}">${m}</option>
-                    `;
+                SmeasureTypeOptsContent += `<option value="${m}">${m}</option>`;
             });
 
+
             const newMeasurementSpec = `
-                <div class="row mb-3" id="specRow_${newSpecId}">
-                    <div class="col-sm-5">
-                        <label class="form-label">Tipo de Medida</label>
-                        <select class="form-select" id="specType_${newSpecId}" onchange="handleMeasureTypeChange(this, ${newSpecId})">
-                            ${SmeasureTypeOptsContent}
-                        </select>
-                    </div>
-                    <div class="col-sm-5">
-                        <label class="form-label">Unidad</label>
-                        <select class="form-select" id="specUnit_${newSpecId}" onchange="handleUnitChange(this, ${newSpecId})">
-                            <option>Seleccione</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-2" style="display: flex; flex-direction: column; justify-content: flex-end;">
-                        <button type="button" class="btn btn-danger bi bi-trash3-fill" onclick="eliminarMeasurementSpec(${newSpecId})"></button>
-                    </div>
-                </div>
-            `;
+        <div class="row mb-3" id="specRow_${newSpecId}">
+            <div class="col-sm-5">
+                <label class="form-label">Tipo de Medida</label>
+                <select class="form-select" id="specType_${newSpecId}" onchange="handleMeasureTypeChange(this, ${newSpecId})">
+                    ${SmeasureTypeOptsContent}
+                </select>
+            </div>
+            <div class="col-sm-5">
+                <label class="form-label">Unidad</label>
+                <select class="form-select" id="specUnit_${newSpecId}" onchange="handleUnitChange(this, ${newSpecId})">
+                    <option>Seleccione</option>
+                </select>
+            </div>
+            <div class="col-sm-2" style="display: flex; flex-direction: column; justify-content: flex-end;">
+                <button type="button" class="btn btn-danger bi bi-trash3-fill" onclick="eliminarMeasurementSpec(${newSpecId})"></button>
+            </div>
+        </div>
+    `;
 
             document.getElementById('measurement-specs-container').insertAdjacentHTML('beforeend', newMeasurementSpec);
         }
+
 
         function updateMeasurementTypeSpecSelector(SmeasureTypeOptsContent) {
             measurementSpecsList.forEach((spec, index) => {
@@ -284,23 +285,24 @@
             const selectedMeasureType = element.value;
             console.log(`Cambio measure type ${id}: ${selectedMeasureType}`);
 
+            // Guarda el tipo de medida en measurementSpecsList
             measurementSpecsList[id].measure_type = selectedMeasureType;
 
-            SunitsOptsContent = '<option>Seleccione</option>';
-            result = await getUnits(selectedMeasureType);
+            let SunitsOptsContent = '<option>Seleccione</option>';
+            const result = await getUnits(selectedMeasureType);
             result.forEach(m => {
-                SunitsOptsContent += `
-                    <option value="${m.value}">${m.value}</option>
-                `;
+                SunitsOptsContent += `<option value="${m.value}">${m.value}</option>`;
             });
 
             updateUnitSelector(id, SunitsOptsContent);
         }
 
         function handleUnitChange(element, id) {
-            const selectedMeasureType = element.value;
-            measurementSpecsList[id].unit = selectedMeasureType;
+            const selectedUnit = element.value;
+            console.log(`Cambio unidad ${id}: ${selectedUnit}`);
+            measurementSpecsList[id].unit = selectedUnit;
         }
+
 
         function updateUnitSelector(id, SunitsOptsContent) {
             const unitSelect = document.getElementById(`specUnit_${id}`);
@@ -348,6 +350,7 @@
                 }
                 )
 
+            measurementSpecsList = [];
         }
 
         // Units
