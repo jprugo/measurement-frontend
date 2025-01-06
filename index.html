@@ -176,7 +176,7 @@
                         return response.text();
                     })
                     .then(data => {
-                        if (data === 'null') {
+                        if (data !== 'null') {
                             console.log('Descripción:', data);
                             openAlarmModal(data);
                         }
