@@ -11,6 +11,7 @@ function pintarTabla(tableBody, measureType) {
                 <th scope="col">#</th>
                 <th scope="col">Fecha</th>
                 <th scope="col">Valor</th>
+                <th scope="col">Unidad</th>
                 <th scope="col">Tipo</th>
                 </tr>
             </thead>
@@ -123,6 +124,7 @@ async function cargarDatos(data, title, suffix) {
                 '<th scope="row">' + cuenta + '</th>' +
                 '<td>' + datos[i].created_at + '</td>' +
                 '<td>' + datos[i].value + '</td>' +
+                '<td>' + datos[i].unit + '</td>' +
                 '<td>' + datos[i].detail + '</td>' +
                 '</tr>';
         }
