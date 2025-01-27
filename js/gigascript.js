@@ -10,6 +10,7 @@ function pintarTabla(tableBody, measureType) {
                 <tr class="table-dark">
                 <th scope="col">#</th>
                 <th scope="col">Fecha</th>
+                <th scope="col">Hora</th>
                 <th scope="col">Valor</th>
                 <th scope="col">Unidad</th>
                 <th scope="col">Tipo</th>
@@ -57,7 +58,7 @@ async function pintarGrafico(pointsObject, title, suffix) {
             labelFontSize: 16,
             labelFontColor: "black",
             title: suffix,
-            titleFontSize: 16,
+            titleFontSize: 20,
         },
         axisX: {
             gridColor: "white",
@@ -65,7 +66,7 @@ async function pintarGrafico(pointsObject, title, suffix) {
             labelFontSize: 16,
             labelFontColor: "black",
             title: "Timestamp",
-            titleFontSize: 16,
+            titleFontSize: 20,
         },
         toolTip: {
             shared: true
@@ -120,9 +121,14 @@ async function cargarDatos(data, title, suffix) {
         for (let i in datos) {
             let cuenta = parseInt(i) + 1;
 
+            var createdAt = new Date(item.created_at);
+            var date = createdAt.toISOString().split('T')[0];  // 'YYYY-MM-DD'
+            var time = createdAt.toTimeString().split(' ')[0];  // 'HH:MM:SS'
+
             tableBody += '<tr>' +
                 '<th scope="row">' + cuenta + '</th>' +
-                '<td>' + datos[i].created_at + '</td>' +
+                '<td>' + date + '</td>' +
+                '<td>' + time + '</td>' +
                 '<td>' + datos[i].value + '</td>' +
                 '<td>' + datos[i].unit + '</td>' +
                 '<td>' + datos[i].detail + '</td>' +

@@ -134,7 +134,7 @@
             escribirMensajeCadaSegundo();
         });
 
-        function openAlarmModal(text) {
+        function openAlarmModal(data) {
             // Eliminar cualquier modal existente si está abierto
             const existingModal = document.getElementById('staticBackdrop');
             if (existingModal) {
@@ -143,14 +143,19 @@
 
             // Crear nuevo contenido para el modal
             const modalContent = `
-                <div class="modal fade bg-danger" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-danger" id="staticBackdropLabel">${data.title}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
                             <div class="modal-body">
-                                <span class="text-danger fs-1">${text}</span>
+                                <p class="text-danger fs-5"><strong>Tipo:</strong> ${data.type}</p>
+                                <p class="text-danger fs-5"><strong>Medida:</strong> ${data.measure_type}</p>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-backdrop="false" onclick="hideModal()">Cerrar</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="hideModal()">Cerrar</button>
                             </div>
                         </div>
                     </div>
@@ -163,7 +168,7 @@
             // Inicializar y mostrar el modal
             const myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
             myModal.show();
-                /*
+            /*
             // Event listener para limpiar el fondo cuando se cierra el modal
             document.getElementById('staticBackdrop').addEventListener('hidden.bs.modal', function () {
                 document.body.classList.remove('modal-open');  // Eliminar la clase que pone el fondo oscuro

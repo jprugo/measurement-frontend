@@ -22,8 +22,9 @@
                                                     <th scope="col">Medida</th>
                                                     <th scope="col">Sensor</th>
                                                     <th scope="col">Valor</th>
-                                                    <th scope="col">Fecha</th>
                                                     <th scope="col">Unidad</th>
+                                                    <th scope="col">Fecha</th>
+                                                    <th scope="col">Hora</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="tabla-body">
@@ -51,13 +52,17 @@
                         var result = data.result;
                         $("#tabla-body").empty();
                         $.each(result, function (index, item) {
+                            var createdAt = new Date(item.created_at);
+                            var date = createdAt.toISOString().split('T')[0];  // 'YYYY-MM-DD'
+                            var time = createdAt.toTimeString().split(' ')[0];  // 'HH:MM:SS'
                             $("#tabla-body").append(`
                                 <tr>
                                     <td>${item.measure_type}</td>
                                     <td>${item.detail}</td>
                                     <td>${item.value}</td>
-                                    <td>${item.created_at}</td>
                                     <td>${item.unit}</td>
+                                    <td>${date}</td>
+                                    <td>${time}</td>
                                 </tr>
                             `);
                         });
