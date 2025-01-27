@@ -143,7 +143,28 @@
 
             // Crear nuevo contenido para el modal
             const modalContent = `
-                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+             <div class="modal fade bg-danger" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-body">
+                        <div style="text-align: center">
+                            <span class="text-danger fs-1 text-center"><b>ATENCIÓN</b></span><br>
+                            <span class="fs-1 text-center"><b>Alarma</b></span><br>
+                        </div><br>
+                        <div style="text-align: left">
+                            <span class="fs-3 text-start">Tipo:</span><span class="fs-2 text-start">&nbsp;<b>${data.type}</b></span><br>
+                            <span class="fs-3 text-start">Medida:</span><span class="fs-2 text-start">&nbsp;<b>${data.measure_type}</b></span><br>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="hideModal('modal-body-content')">Cerrar</button>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            `;
+            /*
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -160,7 +181,7 @@
                         </div>
                     </div>
                 </div>
-            `;
+            */
 
             // Agregar el nuevo modal al DOM
             document.body.insertAdjacentHTML('beforeend', modalContent);
@@ -195,7 +216,7 @@
                         return response.text();
                     })
                     .then(data => {
-                        if (data !== 'null') {
+                        if (data !== 'null') { 
                             console.log('Descripción:', data);
                             openAlarmModal(data);
                         }
