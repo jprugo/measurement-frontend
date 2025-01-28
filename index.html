@@ -33,12 +33,14 @@
     <div class="container-fluid">
         <div class="row flex-nowrap">
             <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark" id="menuPrincipal">
-                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white-50 min-vh-100">
+                <div
+                    class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white-50 min-vh-100">
                     <a class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white-50 text-decoration-none"
                         style="margin-top: 70px;">
                         <span class="fs-5 d-none d-sm-inline">Menu</span>
                     </a>
-                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start"
+                        id="menu">
                         <li>
                             <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
                                 <i class="fs-4 bi-speedometer2"></i><span class="d-none d-sm-inline"> <span
@@ -152,7 +154,7 @@
                             <span class="fs-1 text-center"><b>Alarma</b></span><br>
                         </div><br>
                         <div style="text-align: left">
-                            <span class="fs-3 text-start">Tipo:</span><span class="fs-2 text-start">&nbsp;<b>${data.type}</b></span><br>
+                            <span class="fs-3 text-start">Tipo:</span><span class="fs-2 text-start">&nbsp;<b>${data.alarm_type}</b></span><br>
                             <span class="fs-3 text-start">Medida:</span><span class="fs-2 text-start">&nbsp;<b>${data.measure_type}</b></span><br>
                         </div>
                     </div>
@@ -199,10 +201,31 @@
 
         function hideModal() {
             const modal = bootstrap.Modal.getInstance(document.getElementById('staticBackdrop'));
+            fetch('http://localhost:8000/worker/ws', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: null
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    if (data !== 'null') {
+                        openAlarmModal(data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Hubo un problema con la solicitud:', error);
+                });
             modal.hide();
             if ($('.modal-backdrop').is(':visible')) {
-                $('body').removeClass('modal-open'); 
-                $('.modal-backdrop').remove(); 
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
             };
         }
 
@@ -216,8 +239,7 @@
                         return response.text();
                     })
                     .then(data => {
-                        if (data !== 'null') { 
-                            console.log('Descripción:', data);
+                        if (data !== 'null') {
                             openAlarmModal(data);
                         }
                     })

@@ -6,9 +6,9 @@
         <div class="col-1"><button type="button" class="btn btn-secondary btn-sm bi bi-menu-app-fill"
                 data-bs-toggle="collapse" data-bs-target="#menuPrincipal" aria-expanded="false"
                 aria-controls="menuPrincipal" style="margin-left: -3px; margin-top: 5px;"></button></div>
-        <div class="col-10"><span class="fs-3 text-muted">Medici&oacute;n de Voltage</span></div>
+        <div class="col-10"><span class="fs-3 text-muted">Medici&oacute;n Voltaje Pozo</span></div>
         <div class="col-1 text-end">
-            <i class="bi bi-battery-full"></i>&nbsp;
+            <i class="bi bi-battery-full" width="16" height="16"></i>&nbsp;
             <span class="fs-5 text-muted" style="padding-right: 10px;" id="battery">70%</span>
         </div>
     </div>
@@ -34,32 +34,20 @@
 
                     <div class="row mb-2 border-light text-secondary">
                         <div class="col">
-                            <select class="form-select" aria-label="Default select example" id="voltageType">
-                                <option selected>Todos</option>
-                                <option value="1">ISO</option>
-                                <option value="2">WELL</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row mb-2 border-light text-secondary">
-                        <div class="col">
                             <div class="card border-muted bg-white">
                                 <div class="card-body">
                                     <div class="row fs-6">
                                         <div class="col btn-group me-2" role="group" aria-label="First group">
                                             <button type="button" class="btn btn-outline-secondary">Limpiar</button>
                                             <button type="button" class="btn btn-secondary"
-                                                onclick="manejarRelativeButton(5,'M', 'VOLTAGE', 'voltageType')">5
+                                                onclick="manejarRelativeButton(5,'M', 'TOOL_VOLTAGE', null)">5 m</button>
+                                            <button type="button" class="btn btn-secondary"
+                                                onclick="manejarRelativeButton(30,'M', 'TOOL_VOLTAGE', null)">30
                                                 m</button>
                                             <button type="button" class="btn btn-secondary"
-                                                onclick="manejarRelativeButton(30,'M', 'VOLTAGE', 'voltageType')">30
-                                                m</button>
+                                                onclick="manejarRelativeButton(1,'H', 'TOOL_VOLTAGE', null)">1 h</button>
                                             <button type="button" class="btn btn-secondary"
-                                                onclick="manejarRelativeButton(1,'H', 'VOLTAGE', 'voltageType')">1
-                                                h</button>
-                                            <button type="button" class="btn btn-secondary"
-                                                onclick="manejarRelativeButton(12,'H', 'VOLTAGE', 'voltageType')">12
+                                                onclick="manejarRelativeButton(12,'H', 'TOOL_VOLTAGE', null)">12
                                                 h</button>
                                             <button type="button" class="btn btn-outline-secondary bi bi-calendar-fill"
                                                 id="fechas" data-bs-toggle="modal"
@@ -87,11 +75,9 @@
                 </div>
             </div>
         </div>
-
     </div>
 
-
-    <!-- Modal -->
+    <!-- MODAL DE BUSQUEDA -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -104,20 +90,20 @@
                     <div class="row">
                         <div class="col">
                             <label for="date1" class="form-label">Fecha inicial</label>
-                            <input type="datetime-local" class="form-control" id="date1" name="date1" placeholder="">
+                            <input type="datetime-local" class="form-control" id="date1" name="date1" placeholder="" />
                         </div>
                     </div><br>
                     <div class="row">
                         <div class="col">
                             <label for="date2" class="form-label">Fecha final</label>
-                            <input type="datetime-local" class="form-control" id="date2" name="date2" placeholder="">
+                            <input type="datetime-local" class="form-control" id="date2" name="date2" placeholder="" />
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
-                        onclick="handleSearch('VOLTAGE', 'voltageType')">Buscar</button>
+                        onclick="handleSearch('TOOL_VOLTAGE', null)">Buscar</button>
                 </div>
             </div>
         </div>
@@ -125,17 +111,17 @@
 
     <!-- Scripts -->
     <script>
-        $(document).ready(function () {
-            
-            pintarGrafico([], 'VOLTAGE', getUnitsForMeasureType('VOLTAGE'));
+        $(document).ready(async function () {
+            pintarGrafico([], 'TOOL_VOLTAGE', getUnitsForMeasureType('TOOL_VOLTAGE'));
             fetchBatteryLevel();
 
-            $(window).resize(function() {
+            $(window).resize(function () {
                 pintarGrafico([]);
             });
         });
 
     </script>
+
 </body>
 
 </html>
