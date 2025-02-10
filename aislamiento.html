@@ -131,19 +131,28 @@
             pintarGrafico([], 'ISOLATION', getUnitsForMeasureType('ISOLATION'));
             fetchBatteryLevel();
 
-            // DAR
-            dar = await fetchMeasurementByTimeDelta(1) / await fetchMeasurementByTimeDelta(30);
-            const darElement = document.getElementById('darSpan');
-            darElement.textContent = dar;
-            // PI
-            pi = await fetchMeasurementByTimeDelta(10) / await fetchMeasurementByTimeDelta(1);
-            const piElement = document.getElementById('piSpan');
-            piElement.textContent = pi;
+            setInterval(async function () {
+                await updateMeasurements();
+            }, 60000);
 
             $(window).resize(function () {
                 pintarGrafico([]);
             });
         });
+
+        async function updateMeasurements() {
+            try {
+                // DAR
+                let dar = await fetchMeasurementByTimeDelta(1) / await fetchMeasurementByTimeDelta(30);
+                document.getElementById('darSpan').textContent = dar.toFixed(2);
+
+                // PI
+                let pi = await fetchMeasurementByTimeDelta(10) / await fetchMeasurementByTimeDelta(1);
+                document.getElementById('piSpan').textContent = pi.toFixed(2);
+            } catch (error) {
+                console.error('Error updating measurements:', error);
+            }
+        }
 
         async function fetchMeasurementByTimeDelta(minutes) {
             try {
@@ -165,7 +174,7 @@
                 }
 
                 const data = await response.json();
-                if (data === null){
+                if (data === null) {
                     return 0;
                 }
                 return data.result.value;
