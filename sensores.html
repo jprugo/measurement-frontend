@@ -63,7 +63,7 @@
         });
 
         async function getSensors() {
-            const response = await fetch("http://localhost:8000/measurement/sensor/all", {
+            const response = await fetch("http://192.168.20.126:8000/measurement/sensor/all", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -142,7 +142,7 @@
                 id: id,
             });
 
-            fetch(`http://localhost:8000/measurement/sensor?${params}`, {
+            fetch(`http://192.168.20.126:8000/measurement/sensor?${params}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -330,7 +330,7 @@
 
             console.log('Guardando lista: ' + JSON.stringify(measurementSpecsList))
 
-            fetch(`http://localhost:8000/measurement/sensor?${params}`, {
+            fetch(`http://192.168.20.126:8000/measurement/sensor?${params}`, {
                 method: 'POST',
                 body: JSON.stringify(measurementSpecsList),
                 headers: {
@@ -355,7 +355,7 @@
 
         // Units
         async function getUnits(selectedMeasureType) {
-            const response = await fetch(`http://localhost:8000/measurement/units?measure_type=${selectedMeasureType}`, {
+            const response = await fetch(`http://192.168.20.126:8000/measurement/units?measure_type=${selectedMeasureType}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -373,7 +373,7 @@
 
         // Measure Types
         async function getMeasureTypes(selectedSensorType) {
-            const response = await fetch(`http://localhost:8000/measurement/measureTypesBySensor?sensor_type=${selectedSensorType}`, {
+            const response = await fetch(`http://192.168.20.126:8000/measurement/measureTypesBySensor?sensor_type=${selectedSensorType}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -389,7 +389,7 @@
 
         // Sensor Types
         async function getSensorTypes() {
-            const response = await fetch("http://localhost:8000/measurement/sensorTypes", {
+            const response = await fetch("http://192.168.20.126:8000/measurement/sensorTypes", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"

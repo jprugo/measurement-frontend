@@ -97,6 +97,13 @@
                                         <span class="ms-1 d-none d-sm-inline">Ultimas</span>
                                     </button>
                                 </li>
+                                <li class="w-100">
+                                    <button class="nav-link px-0 align-middle" id="accesibilidad'"
+                                        onclick="manejarClicMenu('accesibilidad.html', '#contenido')">
+                                        <i class="fs-4 bi-wifi-off"></i>
+                                        <span class="ms-1 d-none d-sm-inline">Accesibilidad</span>
+                                    </button>
+                                </li>
                             </ul>
                         </li>
                     </ul>
@@ -115,7 +122,7 @@
 
         $(document).ready(function () {
             $.ajax({
-                url: "http://localhost:8000/option",
+                url: "http://192.168.20.126:8000/option",
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
@@ -201,7 +208,7 @@
 
         function hideModal() {
             const modal = bootstrap.Modal.getInstance(document.getElementById('staticBackdrop'));
-            fetch('http://localhost:8000/worker/ws', {
+            fetch('http://192.168.20.126:8000/worker/ws', {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -231,7 +238,7 @@
 
         function escribirMensajeCadaSegundo() {
             setInterval(function () {
-                fetch('http://localhost:8000/worker/ws')
+                fetch('http://192.168.20.126:8000/worker/ws')
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Error en la solicitud');
