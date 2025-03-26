@@ -64,7 +64,7 @@
         });
 
         async function getAlarmDefinitions() {
-            const response = await fetch("http://192.168.20.126:8000/alarmDefinition", {
+            const response = await fetch("http://localhost:8000/alarmDefinition", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -164,7 +164,7 @@
                 enabled: enabled
             });
 
-            fetch(`http://192.168.20.126:8000/alarmDefinition?${params}`, {
+            fetch(`http://localhost:8000/alarmDefinition?${params}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -187,7 +187,7 @@
         function eliminarConfiguracionAlarmas(id) {
             const params = new URLSearchParams({ id: id });
 
-            fetch(`http://192.168.20.126:8000/alarmDefinition?${params}`, {
+            fetch(`http://localhost:8000/alarmDefinition?${params}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -279,7 +279,7 @@
                 enabled: true
             });
 
-            fetch(`http://192.168.20.126:8000/alarmDefinition?${params}`, {
+            fetch(`http://localhost:8000/alarmDefinition?${params}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -303,7 +303,7 @@
 
         // Measure types
         async function getMeasureTypes() {
-            const response = await fetch("http://192.168.20.126:8000/measurement/measureTypes", {
+            const response = await fetch("http://localhost:8000/measurement/measureTypes", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -328,7 +328,7 @@
         }
 
         async function getUnitsConfiguredForMeasureType(measure_type) {
-            const response = await fetch('http://192.168.20.126:8000/measurement/unitsConfiguredByMeasureType?measure_type=' + measure_type, {
+            const response = await fetch('http://localhost:8000/measurement/unitsConfiguredByMeasureType?measure_type=' + measure_type, {
                 method: 'GET',
                 headers: {
                     'accept': 'application/json'

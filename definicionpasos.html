@@ -77,7 +77,7 @@
         });
 
         async function getStepDefinition() {
-            const response = await fetch("http://192.168.20.126:8000/worker/stepDefinition", {
+            const response = await fetch("http://localhost:8000/worker/stepDefinition", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -162,7 +162,7 @@
 
         function eliminarDefinicionPasos(id, stepId) {
             const params = new URLSearchParams({ id: id });
-            fetch(`http://192.168.20.126:8000/worker/stepDefinition?${params}`, {
+            fetch(`http://localhost:8000/worker/stepDefinition?${params}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' }
             })
@@ -198,7 +198,7 @@
                 sensor_type: sensorType
             });
 
-            fetch(`http://192.168.20.126:8000/worker/stepDefinition?${params}`, {
+            fetch(`http://localhost:8000/worker/stepDefinition?${params}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' }
             })
@@ -287,7 +287,7 @@
                 sensor_type: sensorType
             });
 
-            fetch(`http://192.168.20.126:8000/worker/stepDefinition?${params}`, {
+            fetch(`http://localhost:8000/worker/stepDefinition?${params}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
             })
@@ -307,7 +307,7 @@
 
         function handleMeasurementButtonLoop(suffix) {
             $.ajax({
-                url: `http://192.168.20.126:8000/worker/${suffix}`,
+                url: `http://localhost:8000/worker/${suffix}`,
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
@@ -321,7 +321,7 @@
 
         // Sensor types
         async function getSensorTypes() {
-            const response = await fetch("http://192.168.20.126:8000/measurement/sensorTypes", {
+            const response = await fetch("http://localhost:8000/measurement/sensorTypes", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
