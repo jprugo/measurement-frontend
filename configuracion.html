@@ -51,7 +51,7 @@
 
         function makeRequest() {
             $.ajax({
-                url: "http://192.168.20.126:8000/configuration",
+                url: "http://localhost:8000/configuration",
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
@@ -99,7 +99,7 @@
                 value: value
             });
 
-            fetch(`http://192.168.20.126:8000/configuration?${params}`, {
+            fetch(`http://localhost:8000/configuration?${params}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -149,7 +149,7 @@
                 treatment_as: 'STRING'
             });
 
-            fetch(`http://192.168.20.126:8000/configuration?${params}`, {
+            fetch(`http://localhost:8000/configuration?${params}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -177,7 +177,7 @@
                 value: document.getElementById(`${name}Input`).value
             });
 
-            fetch(`http://192.168.20.126:8000/configuration?${params}`, {
+            fetch(`http://localhost:8000/configuration?${params}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'

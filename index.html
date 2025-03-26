@@ -122,7 +122,7 @@
 
         $(document).ready(function () {
             $.ajax({
-                url: "http://192.168.20.126:8000/option",
+                url: "http://localhost:8000/option",
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
@@ -208,7 +208,7 @@
 
         function hideModal() {
             const modal = bootstrap.Modal.getInstance(document.getElementById('staticBackdrop'));
-            fetch('http://192.168.20.126:8000/worker/ws', {
+            fetch('http://localhost:8000/worker/ws', {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -238,7 +238,7 @@
 
         function escribirMensajeCadaSegundo() {
             setInterval(function () {
-                fetch('http://192.168.20.126:8000/worker/ws')
+                fetch('http://localhost:8000/worker/ws')
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Error en la solicitud');

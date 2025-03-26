@@ -100,7 +100,7 @@ async function cargarDatos(data, title, suffix) {
     );
 
     const params = new URLSearchParams(filteredData).toString();
-    const url = `http://192.168.20.126:8000/measurement?${params}`;
+    const url = `http://localhost:8000/measurement?${params}`;
 
     try {
         const response = await fetch(url, {
@@ -252,7 +252,7 @@ async function manejarRelativeButton(interval, intervalType, measureType, detail
 
 async function fetchBatteryLevel() {
     try {
-        const response = await fetch('http://192.168.20.126:8000/measurement/last', {
+        const response = await fetch('http://localhost:8000/measurement/last', {
             method: 'GET',
             headers: {
                 'accept': 'application/json'
@@ -283,7 +283,7 @@ function updateBatteryLevel(level) {
 
 async function getUnitsForMeasureType(measureType) {
     try {
-        const response = await fetch(`http://192.168.20.126:8000/measurement/sensor?measure_type=${measureType}`);
+        const response = await fetch(`http://localhost:8000/measurement/sensor?measure_type=${measureType}`);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
