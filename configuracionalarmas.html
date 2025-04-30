@@ -106,6 +106,11 @@
                 </div>
 
                 <div class="col-sm-3">
+                    <label class="form-label" for="${item.id}measure_detail">Valor <span class="small">Detalle</span></label>
+                    <input type="text" class="form-control" name="${item.id}measure_detail" id="${item.id}measure_detail" value="${item.measure_detail}">
+                </div>
+
+                <div class="col-sm-3">
                     <label class="form-label" for="${item.id}config_value">Valor <span class="small">(Unidad: ${unidad})</span></label>
                     <input type="number" class="form-control" name="${item.id}config_value" id="${item.id}config_value" value="${item.config_value}">
                 </div>
@@ -149,7 +154,7 @@
         }
 
         function actualizarConfiguracionAlarmas(id) {
-            const measureType = document.getElementById(`${id}measure_type`).value;
+            //const measureType = document.getElementById(`${id}measure_type`).value;
             const configValue = document.getElementById(`${id}config_value`).value;
             const alarmType = document.getElementById(`${id}alarm_type`).value;
             const soundPath = document.getElementById(`${id}sound_path`).value;
@@ -157,7 +162,7 @@
 
             const params = new URLSearchParams({
                 id: id,
-                measure_type: measureType,
+                //measure_type: measureType,
                 new_value: configValue,
                 new_alarm_type: alarmType,
                 new_sound_path: soundPath,
@@ -212,7 +217,7 @@
 
             const content = `
         <div class="row mb-3 text-secondary">
-            <div class="col-sm-5 offset-sm-1">
+            <div class="col-sm-4">
                 <label class="form-label">Medida</label>
                 <select class="form-select" id="newMeasureType" name="newMeasureType">
                     <option value="">Seleccione</option>
@@ -220,12 +225,17 @@
                 </select>
             </div>
 
-            <div class="col-sm-5">
+            <div class="col-sm-4">
+                <label class="form-label">Detalle</label>
+                <input type="text" class="form-control" id="newMeasureDetail" name="newMeasureDetail">
+            </div>
+
+            <div class="col-sm-4">
                 <label class="form-label">Valor <span id="unidadLabel" class="small">(Unidad)</span></label>
                 <input type="number" class="form-control" id="newConfigValue" name="newConfigValue">
             </div>
         </div>
-
+        
         <div class="row mb-3 text-secondary">
             <div class="col-sm-5 offset-sm-1">
                 <label class="form-label">Alarma</label>
@@ -267,12 +277,14 @@
         function guardarConfiguracionAlarmas() {
 
             const measureType = document.getElementById('newMeasureType').value;
+            const measureDetail = document.getElementById('newMeasureDetail').value;
             const configValue = document.getElementById('newConfigValue').value;
             const alarmType = document.getElementById('newAlarmType').value;
             const soundPath = document.getElementById('newSoundPath').value;
 
             const params = new URLSearchParams({
                 measure_type: measureType,
+                measure_detail: measureDetail,
                 value: configValue,
                 alarm_type: alarmType,
                 sound_path: soundPath,
