@@ -157,8 +157,8 @@
                     <div class="modal-content">
                     <div class="modal-body">
                         <div style="text-align: center">
-                            <span class="text-danger fs-1 text-center"><b>ATENCIÓN</b></span><br>
-                            <span class="fs-1 text-center"><b>Alarma</b></span><br>
+                            <span class="text-danger fs-1 text-center"><b>${data.title}</b></span><br>
+                            <span class="fs-1 text-center"><b>${data.description}</b></span><br>
                         </div><br>
                         <div style="text-align: left">
                             <span class="fs-3 text-start">Tipo:</span><span class="fs-2 text-start">&nbsp;<b>${data.alarm_type}</b></span><br>
@@ -219,12 +219,7 @@
                     if (!response.ok) {
                         throw new Error('Error en la solicitud');
                     }
-                    return response.text();
-                })
-                .then(data => {
-                    if (data !== 'null') {
-                        openAlarmModal(data);
-                    }
+                    return response.json();
                 })
                 .catch(error => {
                     console.error('Hubo un problema con la solicitud:', error);
@@ -243,7 +238,7 @@
                         if (!response.ok) {
                             throw new Error('Error en la solicitud');
                         }
-                        return response.text();
+                        return response.json();
                     })
                     .then(data => {
                         if (data !== 'null') {
