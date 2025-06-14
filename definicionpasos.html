@@ -27,8 +27,11 @@
                         <button type="button" class="btn btn-success" onclick="handleMeasurementButtonLoop('start')">
                             <i class="bi bi-play"></i> Comenzar
                         </button>
-                        <button type="button" class="btn btn-success" onclick="handleMeasurementButtonLoop('startOfflineMode')">
-                            <i class="bi bi-play"></i> Modo fuera de linea
+                        <button type="button" class="btn btn-success" onclick="handleMeasurementButtonLoopPost('startOfflineMode')">
+                            <i class="bi bi-wifi-off"></i> Modo fuera de linea
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="handleMeasurementButtonLoopPost('sendOfflineData')">
+                            <i class="bi bi-box-arrow-in-down"></i> Descargar datos fuera de linea
                         </button>
                         <button type="button" class="btn btn-secondary" onclick="handleMeasurementButtonLoop('pause')">
                             <i class="bi bi-pause"></i> Pausar
@@ -309,6 +312,20 @@
         }
 
         function handleMeasurementButtonLoop(suffix) {
+            $.ajax({
+                url: `http://localhost:8000/worker/${suffix}`,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    alert(data.status);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al recuperar los datos del backend:", error);
+                }
+            });
+        }
+
+        function handleMeasurementButtonLoopPost(suffix) {
             $.ajax({
                 url: `http://localhost:8000/worker/${suffix}`,
                 type: "GET",
