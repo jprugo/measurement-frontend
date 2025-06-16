@@ -121,13 +121,13 @@ async function cargarDatos(data, title, suffix) {
         for (let i in datos) {
             let cuenta = parseInt(i) + 1;
 
-            var createdAt = new Date(datos[i].created_at);
-            var date = createdAt.toISOString().split('T')[0];  // 'YYYY-MM-DD'
-            var time = createdAt.toTimeString().split(' ')[0];  // 'HH:MM:SS'
+            const [createdDate, createdTime] = datos[i].created_at.split("T");
+
+            const time = createdTime.split(".")[0];
 
             tableBody += '<tr>' +
                 '<th scope="row">' + cuenta + '</th>' +
-                '<td>' + date + '</td>' +
+                '<td>' + createdDate + '</td>' +
                 '<td>' + time + '</td>' +
                 '<td>' + datos[i].value + '</td>' +
                 '<td>' + datos[i].unit + '</td>' +
